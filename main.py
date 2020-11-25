@@ -19,6 +19,11 @@ class App:
         self._running          = False
         pg.display.set_caption('Batalha Naval - Zoom')
 
+        self.framebuffer = pg.Surface((self._SCREEN_WIDTH, self._SCREEN_HEIGHT))
+        self.rect_1      = (200, 100, 100, 100)
+        self.rect_2      = (500, 400, 100, 100)
+        self.frame_scale = 1.0
+
     def _update(self, dt):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -27,9 +32,23 @@ class App:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self._running = False
+                elif event.key == pg.K_w:
+                    self.frame_scale += 0.1
+                elif event.key == pg.K_s:
+                    self.frame_scale -= 0.1
 
     def _render(self):
-        render_text(self._SCREEN, 'Testando...', (400, 300), 36)
+        self.framebuffer.fill(self._BACKGROUND_COLOR)
+        pg.draw.rect(self.framebuffer, (255,0,0), self.rect_1)
+        pg.draw.rect(self.framebuffer, (0,255,0), self.rect_2)
+        frame = pg.transform.scale(self.framebuffer, (
+            int(self._SCREEN_WIDTH * self.frame_scale), int(self._SCREEN_HEIGHT * self.frame_scale)
+        ))
+
+        self._SCREEN.blit(frame, (
+            (self._SCREEN_WIDTH  - frame.get_width())  // 2,
+            (self._SCREEN_HEIGHT - frame.get_height()) // 2
+        ))
 
     def run(self):
         self._running = True
