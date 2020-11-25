@@ -1,5 +1,14 @@
 import pygame as pg
 
+
+def render_text(surface, text, pos, size, color=(0, 0, 0)):
+    font = pg.font.SysFont('century', size)
+    text_surface = font.render(text, True, color)
+    coords = ( pos[0] - text_surface.get_width()  // 2,
+               pos[1] - text_surface.get_height() // 2)
+    surface.blit(text_surface, coords)
+
+
 class App:
     def __init__(self):
         self._SCREEN_WIDTH     = 800
@@ -9,13 +18,6 @@ class App:
         self._CLOCK            = pg.time.Clock()
         self._running          = False
         pg.display.set_caption('Batalha Naval - Zoom')
-
-    def render_text(self, text, pos, size, color=(0,0,0)):
-        font    = pg.font.SysFont('century', size)
-        surface = font.render(text, True, color)
-        coords  = ( (self._SCREEN.get_width()  - surface.get_width())  // 2,
-                    (self._SCREEN.get_height() - surface.get_height()) // 2 )
-        self._SCREEN.blit(surface, coords)
 
     def _update(self, dt):
         for event in pg.event.get():
@@ -27,7 +29,7 @@ class App:
                     self._running = False
 
     def _render(self):
-        self.render_text('Testando...', (400, 300), 36)
+        render_text(self._SCREEN, 'Testando...', (400, 300), 36)
 
     def run(self):
         self._running = True
