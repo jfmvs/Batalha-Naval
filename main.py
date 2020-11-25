@@ -20,9 +20,16 @@ class App:
         pg.display.set_caption('Batalha Naval - Zoom')
 
         self.framebuffer = pg.Surface((self._SCREEN_WIDTH, self._SCREEN_HEIGHT))
-        self.rect_1      = (200, 100, 100, 100)
-        self.rect_2      = (500, 400, 100, 100)
-        self.frame_scale = 1.0
+        self.rects = [
+            (200, 100, 50, 50),
+            (500, 400, 50, 50),
+            (600,  10, 50, 50),
+            (500, 400, 50, 50),
+            ( 10, 400, 50, 50),
+            (300, 350, 50, 50),
+        ]
+        self.frame_scale  = 1.0
+        self.scale_limits = (0.20, 3.0)
 
     def _update(self, dt):
         for event in pg.event.get():
@@ -33,14 +40,16 @@ class App:
                 if event.key == pg.K_ESCAPE:
                     self._running = False
                 elif event.key == pg.K_w:
-                    self.frame_scale += 0.1
+                    if self.frame_scale < self.scale_limits[1]:
+                        self.frame_scale += 0.1
                 elif event.key == pg.K_s:
-                    self.frame_scale -= 0.1
+                    if self.frame_scale > self.scale_limits[0]:
+                        self.frame_scale -= 0.1
 
     def _render(self):
         self.framebuffer.fill(self._BACKGROUND_COLOR)
-        pg.draw.rect(self.framebuffer, (255,0,0), self.rect_1)
-        pg.draw.rect(self.framebuffer, (0,255,0), self.rect_2)
+        for rect in self.rects:
+            pg.draw.rect(self.framebuffer, (255,0,0), rect)
         frame = pg.transform.scale(self.framebuffer, (
             int(self._SCREEN_WIDTH * self.frame_scale), int(self._SCREEN_HEIGHT * self.frame_scale)
         ))
@@ -49,6 +58,7 @@ class App:
             (self._SCREEN_WIDTH  - frame.get_width())  // 2,
             (self._SCREEN_HEIGHT - frame.get_height()) // 2
         ))
+        render_text(self._SCREEN, f'{self.frame_scale:.2f}', (30, 570), 32)
 
     def run(self):
         self._running = True
