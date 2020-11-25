@@ -36,14 +36,13 @@ class App:
 
         self.player_pos         = [400, 300]
 
-    def _update(self, dt):
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                self._running = False
+    def _update(self, dt, event):
+        if event.type == pg.QUIT:
+            self._running = False
 
-            elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    self._running = False
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                self._running = False
 
         kbd = pg.key.get_pressed()
 
@@ -111,7 +110,8 @@ class App:
         self._running = True
         while self._running:
             dt = self._CLOCK.tick(self._TARGET_FPS) / 1000
-            self._update(dt)
+            event = pg.event.poll()
+            self._update(dt, event)
             self._SCREEN.fill(self._BACKGROUND_COLOR)
             self._render()
             pg.display.update()
