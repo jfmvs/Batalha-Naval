@@ -13,7 +13,7 @@ class App:
         self._TARGET_FPS       = 60
         self._running          = False
         self._current_fps      = 60
-        pg.display.set_caption('Batalha Naval - Zoom')
+        pg.display.set_caption('Batalha Naval - Camera')
 
         self.framebuffer = pg.Surface((1600, 1200))
         self.rects       = [
