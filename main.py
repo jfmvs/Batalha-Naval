@@ -1,4 +1,5 @@
 import pygame as pg
+from camera import Camera
 
 
 def render_text(surface, text, pos, size, color=(0, 0, 0)):
@@ -21,7 +22,9 @@ class App:
         pg.display.set_caption('Batalha Naval - Zoom')
 
         self.framebuffer = pg.Surface((1600, 1200))
-        self.rects = [
+        self.scale = 1.0
+        self.scale_limits = (0.3, 2.0)
+        self.rects       = [
             (200, 100, 50, 50),
             (500, 400, 50, 50),
             (600,  10, 50, 50),
@@ -29,12 +32,8 @@ class App:
             ( 10, 400, 50, 50),
             (300, 350, 50, 50),
         ]
-
-        self.camera_focus       = [400, 300]
-        self.camera_scale       =  1.0
-        self.camera_zoom_limits = (0.1, 3.0)
-
-        self.player_pos         = [400, 300]
+        self.player       = [375, 275, 50, 50]
+        self.camera       = Camera((400, 300), 800, 600)
 
     def _update(self, dt, event):
         if event.type == pg.QUIT:
@@ -46,65 +45,37 @@ class App:
 
         kbd = pg.key.get_pressed()
 
-        if kbd[pg.K_s]:
-            self.camera_focus[1] -= 250 * dt
-        elif kbd[pg.K_w]:
-            self.camera_focus[1] += 250 * dt
+        if kbd[pg.K_a]:
+            self.player[0] -= 250 * dt
         if kbd[pg.K_d]:
-            self.camera_focus[0] -= 250 * dt
-        elif kbd[pg.K_a]:
-            self.camera_focus[0] += 250 * dt
+            self.player[0] += 250 * dt
+
+        if kbd[pg.K_w]:
+            self.player[1] -= 250 * dt
+        if kbd[pg.K_s]:
+            self.player[1] += 250 * dt
 
         if kbd[pg.K_UP]:
-            if self.camera_scale < self.camera_zoom_limits[1]:
-                width_before  = self.framebuffer.get_width()  * self.camera_scale
-                height_before = self.framebuffer.get_height() * self.camera_scale
-
-                self.camera_scale += 0.01
-
-                width_now  = self.framebuffer.get_width()  * self.camera_scale
-                height_now = self.framebuffer.get_height() * self.camera_scale
-
-                self.camera_focus[0] -= (width_now  - width_before)  // 2
-                self.camera_focus[1] -= (height_now - height_before) // 2
-
+            if self.scale < self.scale_limits[1]:
+                self.scale += 0.01
         elif kbd[pg.K_DOWN]:
-            if self.camera_scale > self.camera_zoom_limits[0]:
-                width_before  = self.framebuffer.get_width()  * self.camera_scale
-                height_before = self.framebuffer.get_height() * self.camera_scale
+            if self.scale > self.scale_limits[0]:
+                self.scale -= 0.01
 
-                self.camera_scale -= 0.01
-
-                width_now  = self.framebuffer.get_width()  * self.camera_scale
-                height_now = self.framebuffer.get_height() * self.camera_scale
-
-                self.camera_focus[0] += (width_before  - width_now)  // 2
-                self.camera_focus[1] += (height_before - height_now) // 2
+        self.camera.set_pos(
+            (self.player[0] + self.player[2]) * self.scale,
+            (self.player[1] + self.player[3]) * self.scale
+        )
 
     def _render(self):
-
         self.framebuffer.fill((57, 141, 212))
-
         for rect in self.rects:
             pg.draw.rect(self.framebuffer, (255, 0, 0), rect)
+        pg.draw.rect(self.framebuffer, (0, 255, 0), self.player)
 
-        frame = pg.transform.scale(self.framebuffer, (
-            int(self.framebuffer.get_width()  * self.camera_scale),
-            int(self.framebuffer.get_height() * self.camera_scale)
-        ))
+        self._SCREEN.blit(self.camera.get_modeled(self.framebuffer, self.scale), (0,0))
 
-        self._SCREEN.blit(frame, (0, 0), (
-            (self._SCREEN_WIDTH  - self.camera_focus[0])  // 2,
-            (self._SCREEN_HEIGHT - self.camera_focus[1])  // 2,
-            self._SCREEN_WIDTH, self._SCREEN_HEIGHT
-        ))
-        pg.draw.rect(self._SCREEN, (0, 255, 0), (
-            int(self.player_pos[0] - 25 * self.camera_scale),
-            int(self.player_pos[1] - 25 * self.camera_scale),
-            int(50 * self.camera_scale),
-            int(50 * self.camera_scale)
-        ))
-        render_text(self._SCREEN, f'{self.camera_scale:.2f}', (30, 570), 32)
+        # render_text(self._SCREEN, f'{self.camera_scale:.2f}', (30, 570), 32)
 
     def run(self):
         self._running = True
