@@ -1,4 +1,5 @@
 import pygame as pg
+from player import Player
 
 
 class Camera:
@@ -11,6 +12,7 @@ class Camera:
         self._width    = w
         self._height   = h
         self._zoom     = 1.0
+        self._target   = None
 
     def get_rect(self):
         return (
@@ -51,3 +53,13 @@ class Camera:
         ))
         modeled.blit(tmp, (0, 0), self.get_rect())
         return modeled
+
+    def set_focus(self, target: Player):
+        self._target = target
+
+    def update(self):
+        if self._target:
+            self.set_pos(
+                self._target.get_center()[0] * self.get_zoom(),
+                self._target.get_center()[1] * self.get_zoom()
+            )

@@ -28,6 +28,7 @@ class App:
         self.player               = Player((375, 275), angle=-90, speed=150)
         self.player_angular_speed = 150
         self.camera               = Camera((400, 300), 800, 600)
+        self.camera.set_focus(self.player)
 
     def _update(self, dt, event):
         if event.type == pg.QUIT:
@@ -50,10 +51,7 @@ class App:
             self.camera.zoom_out()
 
         self.player.update(dt)
-        self.camera.set_pos(
-            self.player.get_center()[0] * self.camera.get_zoom(),
-            self.player.get_center()[1] * self.camera.get_zoom()
-        )
+        self.camera.update()
 
     def _render(self):
         self.framebuffer.fill((57, 141, 212))
