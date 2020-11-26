@@ -2,14 +2,6 @@ import pygame as pg
 from camera import Camera
 
 
-def render_text(surface, text, pos, size, color=(0, 0, 0)):
-    font = pg.font.SysFont('century', size)
-    text_surface = font.render(text, True, color)
-    coords = ( pos[0] - text_surface.get_width()  // 2,
-               pos[1] - text_surface.get_height() // 2)
-    surface.blit(text_surface, coords)
-
-
 class App:
     def __init__(self):
         self._SCREEN_WIDTH     = 800
@@ -70,8 +62,6 @@ class App:
         pg.draw.rect(self.framebuffer, (0, 255, 0), self.player)
 
         self._SCREEN.blit(self.camera.get_modeled(self.framebuffer), (0,0))
-
-        # render_text(self._SCREEN, f'{self.camera_scale:.2f}', (30, 570), 32)
 
     def run(self):
         self._running = True
