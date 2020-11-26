@@ -22,8 +22,6 @@ class App:
         pg.display.set_caption('Batalha Naval - Zoom')
 
         self.framebuffer = pg.Surface((1600, 1200))
-        self.scale = 1.0
-        self.scale_limits = (0.3, 2.0)
         self.rects       = [
             (200, 100, 50, 50),
             (500, 400, 50, 50),
@@ -56,15 +54,13 @@ class App:
             self.player[1] += 250 * dt
 
         if kbd[pg.K_UP]:
-            if self.scale < self.scale_limits[1]:
-                self.scale += 0.01
+            self.camera.zoom_in()
         elif kbd[pg.K_DOWN]:
-            if self.scale > self.scale_limits[0]:
-                self.scale -= 0.01
+            self.camera.zoom_out()
 
         self.camera.set_pos(
-            (self.player[0] + self.player[2]) * self.scale,
-            (self.player[1] + self.player[3]) * self.scale
+            (self.player[0] + self.player[2]) * self.camera.get_zoom(),
+            (self.player[1] + self.player[3]) * self.camera.get_zoom()
         )
 
     def _render(self):
@@ -73,7 +69,7 @@ class App:
             pg.draw.rect(self.framebuffer, (255, 0, 0), rect)
         pg.draw.rect(self.framebuffer, (0, 255, 0), self.player)
 
-        self._SCREEN.blit(self.camera.get_modeled(self.framebuffer, self.scale), (0,0))
+        self._SCREEN.blit(self.camera.get_modeled(self.framebuffer), (0,0))
 
         # render_text(self._SCREEN, f'{self.camera_scale:.2f}', (30, 570), 32)
 
