@@ -1,5 +1,6 @@
 import pygame as pg
 from camera import Camera
+from text   import Text
 
 
 class App:
@@ -11,6 +12,7 @@ class App:
         self._CLOCK            = pg.time.Clock()
         self._TARGET_FPS       = 60
         self._running          = False
+        self._current_fps      = 60
         pg.display.set_caption('Batalha Naval - Zoom')
 
         self.framebuffer = pg.Surface((1600, 1200))
@@ -63,10 +65,17 @@ class App:
 
         self._SCREEN.blit(self.camera.get_modeled(self.framebuffer), (0,0))
 
+        Text.render(self._SCREEN, 'camera pos:      x: {:.2f},     y: {:.2f}'.format(
+            self.camera.get_pos()[0], self.camera.get_pos()[1]
+        ), (10, 5), 16, color=(255,255,255))
+        Text.render(self._SCREEN, f'scale: {self.camera.get_zoom():.2f}', (10, 20), 16, color=(255,255,255))
+        Text.render(self._SCREEN, f'fps: {self._current_fps:}', (10, 40), 16, color=(255,255,255))
+
     def run(self):
         self._running = True
         while self._running:
             dt = self._CLOCK.tick(self._TARGET_FPS) / 1000
+            self._current_fps = int(1 / dt)
             event = pg.event.poll()
             self._update(dt, event)
             self._SCREEN.fill(self._BACKGROUND_COLOR)
