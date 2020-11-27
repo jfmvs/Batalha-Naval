@@ -1,5 +1,5 @@
 import pygame as pg
-from player import Player
+from core.player import Player
 
 
 class Camera:

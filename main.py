@@ -1,8 +1,6 @@
 import sys
 import pygame as pg
-from camera import Camera
-from text   import Text
-from player import Player
+from core import *
 
 
 class App:
