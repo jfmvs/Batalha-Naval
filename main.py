@@ -54,6 +54,14 @@ class App:
         self.player.update(dt)
         self.camera.update()
 
+    def _render(self):
+        self.framebuffer.fill((57, 141, 212))
+
+        for rect in self.rects:
+            pg.draw.rect(self.framebuffer, (255, 0, 0), rect)
+
+        self.player.draw(self.framebuffer)
+
     def _render_debug_data(self):
         Text.render(self._SCREEN, 'camera pos:      x: {:.2f},     y: {:.2f}'.format(
             self.camera.get_pos()[0], self.camera.get_pos()[1]
@@ -67,14 +75,6 @@ class App:
         Text.render(
             self._SCREEN, f'player angle: {self.player.get_angle():.2f}', (10, 100), 16, color=(255,255,255)
         )
-
-    def _render(self):
-        self.framebuffer.fill((57, 141, 212))
-
-        for rect in self.rects:
-            pg.draw.rect(self.framebuffer, (255, 0, 0), rect)
-
-        self.player.draw(self.framebuffer)
 
     def run(self):
         self._running = True
