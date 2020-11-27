@@ -70,14 +70,11 @@ class App:
 
     def _render(self):
         self.framebuffer.fill((57, 141, 212))
+
         for rect in self.rects:
             pg.draw.rect(self.framebuffer, (255, 0, 0), rect)
+
         self.player.draw(self.framebuffer)
-
-        self._SCREEN.blit(self.camera.get_modeled(self.framebuffer), (0,0))
-
-        if '-o' not in sys.argv:
-            self._render_debug_data()
 
     def run(self):
         self._running = True
@@ -88,6 +85,9 @@ class App:
             self._update(dt, event)
             self._SCREEN.fill(self._BACKGROUND_COLOR)
             self._render()
+            self._SCREEN.blit(self.camera.get_modeled(self.framebuffer), (0,0))
+            if '-o' not in sys.argv:
+                self._render_debug_data()
             pg.display.update()
 
 
