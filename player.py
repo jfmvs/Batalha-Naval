@@ -4,11 +4,12 @@ from pygame import gfxdraw
 
 
 class Player:
-    def __init__(self, pos, speed=250, angle=0, size=50):
+    def __init__(self, pos, speed=250, angle=0):
         self._position      = pg.Vector2(*pos)
         self._speed         = speed
         self._angle         = angle
-        self._size          = size
+        self._sprite        = pg.image.load('assets/player.png').convert_alpha()
+        self._sprite        = pg.transform.scale(self._sprite, (120, 20))
 
     @property
     def direction(self):
@@ -30,14 +31,17 @@ class Player:
         return self._position
 
     def get_center(self):
-        return self._position.x + self._size // 2, self._position.y + self._size // 2
+        return self._position.x, self._position.y
 
     def draw(self, surface):
-        pg.draw.rect(surface, (0,255,0), [self._position.x, self._position.y, self._size, self._size])
+        modeled = pg.transform.flip(self._sprite, True, False)
+        modeled = pg.transform.rotate(modeled, -self._angle)
+        coords = (self._position.x - modeled.get_width() // 2, self._position.y - modeled.get_height() // 2)
+        surface.blit(modeled, coords)
 
         if '-o' not in sys.argv:
             length    = 40
-            coord1 = self.get_center()
+            coord1 = self._position.x, self._position.y
             coord2 = int(coord1[0] + self.direction.x * length), int(coord1[1] + self.direction.y * length)
             coord1 = int(coord1[0]), int(coord1[1])
             pg.gfxdraw.line(surface, *coord1, *coord2, (223, 32, 203))
