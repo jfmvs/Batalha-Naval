@@ -7,6 +7,10 @@ from player import Player
 
 class App:
     def __init__(self):
+        """Construtor"""
+
+        # dados do funcionamento de App
+
         self._SCREEN_WIDTH     = 800
         self._SCREEN_HEIGHT    = 600
         self._SCREEN           = pg.display.set_mode((self._SCREEN_WIDTH, self._SCREEN_HEIGHT))
@@ -16,6 +20,8 @@ class App:
         self._running          = False
         self._current_fps      = 60
         pg.display.set_caption('Batalha Naval - Camera')
+
+        # itens do jogo
 
         self.framebuffer = pg.Surface((1600, 1200))
         self.rects       = [
@@ -32,6 +38,8 @@ class App:
         self.camera.set_focus(self.player)
 
     def _update(self, dt, event):
+        """Mudanças de estado"""
+
         if event.type == pg.QUIT:
             self._running = False
 
@@ -55,6 +63,10 @@ class App:
         self.camera.update()
 
     def _render(self):
+        """Construir cena"""
+
+        # renderize o mundo em framebuffer
+
         self.framebuffer.fill((57, 141, 212))
 
         for rect in self.rects:
@@ -63,6 +75,8 @@ class App:
         self.player.draw(self.framebuffer)
 
     def _render_debug_data(self):
+        """Dados para depuração"""
+
         Text.render(self._SCREEN, 'camera pos:      x: {:.2f},     y: {:.2f}'.format(
             self.camera.get_pos()[0], self.camera.get_pos()[1]
         ), (10, 5), 16, color=(255,255,255))
@@ -77,6 +91,8 @@ class App:
         )
 
     def run(self):
+        """Iniciar jogo"""
+
         self._running = True
         while self._running:
             dt = self._CLOCK.tick(self._TARGET_FPS) / 1000
