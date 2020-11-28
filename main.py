@@ -48,9 +48,9 @@ class App:
         kbd = pg.key.get_pressed()
 
         if kbd[pg.K_a]:
-            self.player.rotate(dt, -self.player_angular_speed)
+            self.player.rotate(dt * -self.player_angular_speed)
         if kbd[pg.K_d]:
-            self.player.rotate(dt,  self.player_angular_speed)
+            self.player.rotate(dt *  self.player_angular_speed)
 
         if kbd[pg.K_UP]:
             self.camera.zoom_in()

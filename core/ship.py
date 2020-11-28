@@ -35,7 +35,7 @@ class Ship:
     -------
     update(dt):
         muda a posição do navio
-    rotate(dt, angle):
+    rotate(angle):
         muda o ângulo do navio
     draw(surface):
         renderiza o navio no objecto pygame.Surface especificado
@@ -98,7 +98,7 @@ class Ship:
         """
         self._position += self.direction * self._speed * dt
 
-    def rotate(self, dt: float, angle: float):
+    def rotate(self, angle: float):
         """
         Descrição
         ---------
@@ -106,8 +106,6 @@ class Ship:
 
         Parâmetros
         ----------
-        dt : float
-            variação de tempo
         angle : float
             variação do ângulo do navio
 
@@ -115,7 +113,7 @@ class Ship:
         -------
         None
         """
-        self._angle += angle * dt
+        self._angle += angle
         self._angle = self._angle % 360
 
     def draw(self, surface: pg.Surface):
