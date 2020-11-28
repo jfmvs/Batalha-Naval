@@ -22,15 +22,15 @@ class App:
         # itens do jogo
 
         self.framebuffer = pg.Surface((1600, 1200))
-        self.rects       = [
-            (200, 100, 50, 50),
-            (500, 400, 50, 50),
-            (600,  10, 50, 50),
-            (500, 400, 50, 50),
-            ( 10, 400, 50, 50),
-            (300, 350, 50, 50),
+        self.npcs = [
+            Ship((200, 100), angle=70),
+            Ship((500, 400), angle=-90),
+            Ship((600, 100), angle=80),
+            Ship((700, 600), angle=-120),
+            Ship((100, 400)),
+            Ship((400, 700), angle=90),
         ]
-        self.player               = Player((375, 275), angle=-90, speed=150)
+        self.player               = Ship((375, 275), angle=-90, speed=150)
         self.player_angular_speed = 150
         self.camera               = Camera((400, 300), 800, 600)
         self.camera.set_focus(self.player)
@@ -67,8 +67,8 @@ class App:
 
         self.framebuffer.fill((57, 141, 212))
 
-        for rect in self.rects:
-            pg.draw.rect(self.framebuffer, (255, 0, 0), rect)
+        for npc in self.npcs:
+            npc.draw(self.framebuffer)
 
         self.player.draw(self.framebuffer)
 
