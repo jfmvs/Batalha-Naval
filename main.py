@@ -30,7 +30,7 @@ class App:
             Ship((100, 400)),
             Ship((400, 700), angle=90),
         ]
-        self.player               = Ship((375, 275), angle=-90, speed=150)
+        self.player               = Ship((375, 275), angle=135, speed=150)
         self.player_angular_speed = 150
         self.camera               = Camera((400, 300), 800, 600)
         self.camera.set_focus(self.player)

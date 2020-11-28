@@ -65,7 +65,7 @@ class Ship:
 
     @property
     def direction(self):
-        direction = pg.Vector2(1.0, 0.0)
+        direction = pg.Vector2(-1.0, 0.0)
         direction.rotate_ip(self._angle)
         return direction
 
@@ -132,8 +132,7 @@ class Ship:
         -------
         None
         """
-        modeled = pg.transform.flip(self._sprite, True, False)
-        modeled = pg.transform.rotate(modeled, -self._angle)
+        modeled = pg.transform.rotate(self._sprite, -self._angle)
         coords = (self._position.x - modeled.get_width() // 2, self._position.y - modeled.get_height() // 2)
         surface.blit(modeled, coords)
 
