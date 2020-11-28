@@ -76,16 +76,16 @@ class App:
         """Dados para depuração"""
 
         Text.render(self._SCREEN, 'camera pos:      x: {:.2f},     y: {:.2f}'.format(
-            self.camera.get_pos()[0], self.camera.get_pos()[1]
+            self.camera.position[0], self.camera.position[1]
         ), (10, 5), 16, color=(255,255,255))
-        Text.render(self._SCREEN, f'scale: {self.camera.get_zoom():.2f}', (10, 20), 16, color=(255,255,255))
+        Text.render(self._SCREEN, f'scale: {self.camera.zoom:.2f}', (10, 20), 16, color=(255,255,255))
         Text.render(self._SCREEN, f'fps: {self._current_fps:}', (10, 40), 16, color=(255,255,255))
         Text.render(self._SCREEN, 'player pos:     x: {:.2f},   y: {:.2f}'.format(
-            *self.player.get_pos()
+            *self.player.position
             ), (10, 80), 16, color=(255,255,255)
         )
         Text.render(
-            self._SCREEN, f'player angle: {self.player.get_angle():.2f}', (10, 100), 16, color=(255,255,255)
+            self._SCREEN, f'player angle: {self.player.angle:.2f}', (10, 100), 16, color=(255,255,255)
         )
 
     def run(self):

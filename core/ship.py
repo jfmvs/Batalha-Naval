@@ -23,7 +23,13 @@ class Ship:
     Propriedades
     ------------
     direction : pygame.Vector2
-        indica a direção do movimento do navio
+        retorna a direção do movimento do navio
+    angle : float
+        retorna o valor de `_angle`
+    position : pygame.Vector2
+        retorna o valor de `_position`
+    center : pygame.Vector2
+        retorna as coordenadas do centro do navio
 
     Métodos
     -------
@@ -31,22 +37,15 @@ class Ship:
         muda a posição do navio
     rotate(dt, angle):
         muda o ângulo do navio
-    get_angle():
-        retorna o ângulo do navio
-    get_pos():
-        retorna a posição do navio
-    get_center():
-        retorna a posição central do navio
     draw(surface):
         renderiza o navio no objecto pygame.Surface especificado
-
     """
 
     def __init__(self, pos: (list, tuple, pg.Vector2), speed: int = 250, angle: float = 0):
         """
         Descrição
         ---------
-        Inicializa a instância da classe Ship
+        Inicializa uma instância de Ship
 
         Parâmetros
         ----------
@@ -57,20 +56,30 @@ class Ship:
             (default 250)
         angle : float, opcional
             ângulo do navio com o eixo x (default 0)
-
         """
-
         self._position = pg.Vector2(*pos)
-        self._speed = speed
-        self._angle = angle
-        self._sprite = pg.image.load('assets/player.png').convert_alpha()
-        self._sprite = pg.transform.scale(self._sprite, (120, 20))
+        self._speed    = speed
+        self._angle    = angle
+        self._sprite   = pg.image.load('assets/player.png').convert_alpha()
+        self._sprite   = pg.transform.scale(self._sprite, (120, 20))
 
     @property
     def direction(self):
         direction = pg.Vector2(1.0, 0.0)
         direction.rotate_ip(self._angle)
         return direction
+
+    @property
+    def angle(self):
+        return self._angle
+
+    @property
+    def position(self):
+        return self._position
+
+    @property
+    def center(self):
+        return self._position.x, self._position.y
 
     def update(self, dt: float):
         """
@@ -86,9 +95,7 @@ class Ship:
         Retorno
         -------
         None
-
         """
-
         self._position += self.direction * self._speed * dt
 
     def rotate(self, dt: float, angle: float):
@@ -107,61 +114,16 @@ class Ship:
         Retorno
         -------
         None
-
         """
-
         self._angle += angle * dt
         self._angle = self._angle % 360
-
-    def get_angle(self):
-        """
-        Descrição
-        ---------
-        Getter para o atributo `_angle`
-
-        Retorno
-        -------
-        float
-
-        """
-
-        return self._angle
-
-    def get_pos(self):
-        """
-        Descrição
-        ---------
-        Getter para o atributo `_position`
-
-        Retorno
-        -------
-        pygame.Vector2
-
-        """
-
-        return self._position
-
-    def get_center(self):
-        """
-        Descrição
-        ---------
-        Retorna a posição do centro do navio
-
-        Retorno
-        -------
-        pygame.Vector2
-
-        """
-
-        return self._position.x, self._position.y
 
     def draw(self, surface: pg.Surface):
         """
         Descrição
         ---------
-        Renderiza o objeto do atributo _sprite na superfície dada como
-        parâmetro. No modo debug, também renderiza uma linha
-        representante da direção
+        Renderiza `_sprite` na superfície dada como parâmetro. No modo
+        debug, também renderiza uma linha representante da direção.
 
         Parâmetros
         ----------
@@ -171,9 +133,7 @@ class Ship:
         Retorno
         -------
         None
-
         """
-
         modeled = pg.transform.flip(self._sprite, True, False)
         modeled = pg.transform.rotate(modeled, -self._angle)
         coords = (self._position.x - modeled.get_width() // 2, self._position.y - modeled.get_height() // 2)

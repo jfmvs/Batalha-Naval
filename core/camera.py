@@ -24,33 +24,37 @@ class Camera:
     _zoom : float
         escala da região vísivel do mundo
     _target : Player, opcional
-        se atribuído, a câmera manterá o valor de _position como sua
-        posição
+        se atribuído, a câmera manterá `_position` como sua posição
+
+    Propriedades
+    ------------
+    rect : tuple
+        retorna os dados da região visível do mundo
+    posistion : list
+        retorna o valor de `_position`
+    zoom : float
+        retorna o valor de `_zoom`
+
+    Setters
+    -------
+    posistion:
+        altera o valor de `_position`
+    zoom:
+        altera o valor de `_zoom`
+
 
     Métodos
     -------
-    get_rect():
-        retorna os dados da região visível do mundo
-
-    get_pos():
-        getter do atributo _position
-    set_pos(x, y):
-        altera o valor do atributo `_position`
-    set_zoom(value):
-        altera o valor do atributo `_zoom`
     zoom_in():
-        aumento o valor do atributo `_zoom`
+        aumento o valor de `_zoom`
     zoom_out():
-        diminui o valor do atributo `_zoom`
-    get_zoom():
-        retorna o valor de `_zoom`
+        diminui o valor de `_zoom`
     get_modeled(surface):
         retorna a área visível de surface como um objeto pygame.Surface
     set_focus(target):
         atribui um valor para `_target`
     update():
-        o valor de _position é alterado para a posição de `_target`
-
+        `_position` é alterado para a posição de `_target`
     """
 
     _ZOOM_MIN = 0.3
@@ -60,7 +64,7 @@ class Camera:
         """
         Descrição
         ---------
-        Inicializa a instância de Camera
+        Inicializa uma instância de Camera
 
         Parâmetros
         ----------
@@ -70,7 +74,6 @@ class Camera:
             largura da região visível do mundo
         h : int
             altura da regiãp visível do mundo
-
         """
 
         self._position = list(pos)
@@ -79,78 +82,29 @@ class Camera:
         self._zoom     = 1.0
         self._target   = None
 
-    def get_rect(self):
-        """
-        Descrição
-        ---------
-        Retorna os dados da região visível do mundo para serem usados
-        como um objeto pygame.Rect
-
-        Retorno
-        -------
-        tuple
-
-        """
-
+    @property
+    def rect(self):
         return (
-            self.get_pos()[0] - self._width // 2,
-            self.get_pos()[1] - self._height // 2,
+            self.position[0] - self._width // 2,
+            self.position[1] - self._height // 2,
             self._width, self._height
         )
 
-    def get_pos(self):
-        """
-        Descrição
-        ---------
-        Getter para o atributo `_position`
-
-        Retorno
-        -------
-        list
-        """
-
+    @property
+    def position(self):
         return self._position
 
-    def set_pos(self, x: int, y: int):
-        """
-        Descrição
-        ---------
-        Setter para o atributo `_position`
+    @position.setter
+    def position(self, value: (list, tuple)):
+        self._position[0] = value[0]
+        self._position[1] = value[1]
 
-        Parâmetros
-        ----------
-        x : int
-            valor para o componente x do atributo `_position`
-        y : int
-            valor para o componente y do atributo `_position`
+    @property
+    def zoom(self):
+        return self._zoom
 
-        Retorno
-        -------
-        None
-
-        """
-
-        self._position[0] = x
-        self._position[1] = y
-
-    def set_zoom(self, value: float):
-        """
-        Descricção
-        ----------
-        Setter para o atributo `_zoom`. Mantém o valor dentro do limite
-        [`_ZOOM_MIN`, `_ZOOM_MAX`].
-
-        Parâmetro
-        ---------
-        value : float
-            novo valor para o atributo `_zoom`
-
-        Retorno
-        -------
-        None
-
-        """
-
+    @zoom.setter
+    def zoom(self, value: float):
         if value > Camera._ZOOM_MAX:
             self._zoom = Camera._ZOOM_MAX
         elif value < Camera._ZOOM_MIN:
@@ -162,43 +116,25 @@ class Camera:
         """
         Descrição
         ---------
-        Aumenta o valor do atributo `_zoom` em um valor constante
+        Aumenta `_zoom` em um valor constante
 
         Retorno
         -------
         None
-
         """
-
-        self.set_zoom(self._zoom + 0.01)
+        self.zoom += 0.01
 
     def zoom_out(self):
         """
         Descrição
         ---------
-        Diminui o valor do atributo `_zoom` em um valor constante
+        Diminui `_zoom` em um valor constante
 
         Retorno
         -------
         None
-
         """
-
-        self.set_zoom(self._zoom - 0.01)
-
-    def get_zoom(self):
-        """
-        Descrição
-        ---------
-        Getter para o atributo `_zoom`
-
-        Retorno
-        -------
-        float
-
-        """
-
-        return self._zoom
+        self.zoom -= 0.01
 
     def get_modeled(self, surface: pg.Surface):
         """
@@ -215,29 +151,25 @@ class Camera:
         Retorno
         -------
         pygame.Surface
-
         """
-
         modeled = pg.Surface((self._width, self._height))
         tmp = pg.transform.scale(surface, (
-            int(surface.get_width()  * self.get_zoom()),
-            int(surface.get_height() * self.get_zoom())
+            int(surface.get_width()  * self.zoom),
+            int(surface.get_height() * self.zoom)
         ))
-        modeled.blit(tmp, (0, 0), self.get_rect())
+        modeled.blit(tmp, (0, 0), self.rect)
         return modeled
 
     def set_focus(self, target: Ship):
         """
         Descrição
         ---------
-        Setter para o atributo `_target`
+        Setter para `_target`
 
         Retorno
         -------
         None
-
         """
-
         self._target = target
 
     def update(self):
@@ -245,17 +177,13 @@ class Camera:
         Descrição
         ---------
         Altera a posição da câmera para que centro de `_target` seja
-        mantido como centro da janela se houver um valor atribuído ao
-        atributo `_target`
+        mantido como centro da janela se houver um valor atribuído a
+        `_target`
 
         Retorno
         -------
         None
-
         """
-
         if self._target:
-            self.set_pos(
-                self._target.get_center()[0] * self.get_zoom(),
-                self._target.get_center()[1] * self.get_zoom()
-            )
+            self.position[0] = self._target.center[0] * self.zoom
+            self.position[1] = self._target.center[1] * self.zoom
