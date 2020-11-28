@@ -3,43 +3,42 @@ import pygame as pg
 from pygame import gfxdraw
 
 
-class Player:
+class Ship:
     """
     Descrição
     ------
-    A classe encapsula toda a lógica do movimento e renderização do
-    personagem principal.
+    A classe encapsula a lógica do movimento e renderização dos navios.
 
     Atributos
     ---------
     _position : pygame.Vector2
-        posição central do jogador
+        posição central do navio
     _speed : int
         taxa de mudança de posição em pixel/s
     _angle : float
-        ângulo da direção do jogador com o eixo x
+        ângulo da direção do navio com o eixo x
     _sprite : pygame.Surface
-        objeto para renderizar a imagem que representa o jogador
+        objeto para renderizar a imagem que representa o navio
 
     Propriedades
     ------------
     direction : pygame.Vector2
-        indica a direção do movimento do jogador
+        indica a direção do movimento do navio
 
     Métodos
     -------
     update(dt):
-        muda a posição do jogador
+        muda a posição do navio
     rotate(dt, angle):
-        muda o ângulo do jogador
+        muda o ângulo do navio
     get_angle():
-        retorna o ângulo do jogador
+        retorna o ângulo do navio
     get_pos():
-        retorna a posição do jogador
+        retorna a posição do navio
     get_center():
-        retorna a posição central do jogador
+        retorna a posição central do navio
     draw(surface):
-        renderiza o jogador no objecto pygame.Surface especificado
+        renderiza o navio no objecto pygame.Surface especificado
 
     """
 
@@ -47,17 +46,17 @@ class Player:
         """
         Descrição
         ---------
-        Inicializa a instância da classe Player
+        Inicializa a instância da classe Ship
 
         Parâmetros
         ----------
         pos : list, tuple, pygame.Vector2
-            posição central do jogador
+            posição central do navio
         speed : int, opcional
-            taxa de mudança de posição do jogador em pixel/s
+            taxa de mudança de posição do navio em pixel/s
             (default 250)
         angle : float, opcional
-            ângulo do jogador com o eixo x (default 0)
+            ângulo do navio com o eixo x (default 0)
 
         """
 
@@ -77,7 +76,7 @@ class Player:
         """
         Descrição
         ------
-        Altera a posição do jogador
+        Altera a posição do navio
 
         Parâmetros
         ----------
@@ -96,14 +95,14 @@ class Player:
         """
         Descrição
         ---------
-        Altera o ângulo do jogador com o eixo x
+        Altera o ângulo do navio com o eixo x
 
         Parâmetros
         ----------
         dt : float
             variação de tempo
         angle : float
-            variação do ângulo do jogador
+            variação do ângulo do navio
 
         Retorno
         -------
@@ -146,7 +145,7 @@ class Player:
         """
         Descrição
         ---------
-        Retorna a posição do centro do jogador
+        Retorna a posição do centro do navio
 
         Retorno
         -------
@@ -167,7 +166,7 @@ class Player:
         Parâmetros
         ----------
         surface : pygame.Surface
-            superfície onde o jogador deve ser renderizado
+            superfície onde o navio deve ser renderizado
 
         Retorno
         -------

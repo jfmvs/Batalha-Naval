@@ -18,5 +18,5 @@ Classes
 """
 
 from .camera import *
-from .player import *
+from .ship import *
 from .text   import *

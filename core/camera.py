@@ -1,5 +1,5 @@
 import pygame as pg
-from core.player import Player
+from .ship import Ship
 
 
 class Camera:
@@ -226,7 +226,7 @@ class Camera:
         modeled.blit(tmp, (0, 0), self.get_rect())
         return modeled
 
-    def set_focus(self, target: Player):
+    def set_focus(self, target: Ship):
         """
         Descrição
         ---------
