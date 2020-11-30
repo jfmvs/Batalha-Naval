@@ -7,7 +7,7 @@ class Ship:
     """
     Descrição
     ------
-    A classe encapsula a lógica do movimento e renderização dos navios.
+    A classe encapsula a lógica de movimento dos navios.
 
     Atributos
     ---------
@@ -18,7 +18,8 @@ class Ship:
     _angle : float
         ângulo da direção do navio com o eixo x
     _sprite : pygame.Surface
-        objeto para renderizar a imagem que representa o navio
+        referência a usado para renderizar a imagem que representa o
+        navio
 
     Propriedades
     ------------
@@ -37,8 +38,6 @@ class Ship:
         muda a posição do navio
     rotate(angle):
         muda o ângulo do navio
-    draw(surface):
-        renderiza o navio no objecto pygame.Surface especificado
     """
 
     def __init__(self, pos: (list, tuple, pg.Vector2), sprite: pg.Surface, speed: int = 250, angle: float = 0):
@@ -84,10 +83,6 @@ class Ship:
     def sprite(self):
         return self._sprite
 
-    @sprite.setter
-    def sprite(self, value: pg.Surface):
-        self._sprite = value
-
     def update(self, dt: float):
         """
         Descrição
@@ -123,29 +118,3 @@ class Ship:
         self._angle += angle
         self._angle = self._angle % 360
 
-    def draw(self, surface: pg.Surface):
-        """
-        Descrição
-        ---------
-        Renderiza `_sprite` na superfície dada como parâmetro. No modo
-        debug, também renderiza uma linha representante da direção.
-
-        Parâmetros
-        ----------
-        surface : pygame.Surface
-            superfície onde o navio deve ser renderizado
-
-        Retorno
-        -------
-        None
-        """
-        modeled = pg.transform.rotate(self._sprite, -self._angle)
-        coords = (self._position.x - modeled.get_width() // 2, self._position.y - modeled.get_height() // 2)
-        surface.blit(modeled, coords)
-
-        if '-o' not in sys.argv:
-            length = 40
-            coord1 = self._position.x, self._position.y
-            coord2 = int(coord1[0] + self.direction.x * length), int(coord1[1] + self.direction.y * length)
-            coord1 = int(coord1[0]), int(coord1[1])
-            pg.gfxdraw.line(surface, *coord1, *coord2, (223, 32, 203))
