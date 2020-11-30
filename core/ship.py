@@ -41,7 +41,7 @@ class Ship:
         renderiza o navio no objecto pygame.Surface especificado
     """
 
-    def __init__(self, pos: (list, tuple, pg.Vector2), speed: int = 250, angle: float = 0):
+    def __init__(self, pos: (list, tuple, pg.Vector2), sprite: pg.Surface, speed: int = 250, angle: float = 0):
         """
         Descrição
         ---------
@@ -60,8 +60,7 @@ class Ship:
         self._position = pg.Vector2(*pos)
         self._speed    = speed
         self._angle    = angle
-        self._sprite   = pg.image.load('assets/player.png').convert_alpha()
-        self._sprite   = pg.transform.scale(self._sprite, (120, 20))
+        self._sprite   = sprite
 
     @property
     def direction(self):
@@ -84,6 +83,10 @@ class Ship:
     @property
     def sprite(self):
         return self._sprite
+
+    @sprite.setter
+    def sprite(self, value: pg.Surface):
+        self._sprite = value
 
     def update(self, dt: float):
         """

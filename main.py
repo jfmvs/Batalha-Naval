@@ -21,15 +21,18 @@ class App:
 
         # itens do jogo
 
+        SpriteManager.load('basic', 'assets/player.png')
+        SpriteManager.rescale('basic', (120, 20))
+
         self.npcs = [
-            Ship((200, 100), angle=70),
-            Ship((500, 400), angle=-90),
-            Ship((600, 100), angle=80),
-            Ship((700, 600), angle=-120),
-            Ship((100, 400)),
-            Ship((400, 700), angle=90),
+            Ship((200, 100), sprite=SpriteManager.get('basic'), angle=70),
+            Ship((500, 400), sprite=SpriteManager.get('basic'), angle=-90),
+            Ship((600, 100), sprite=SpriteManager.get('basic'), angle=80),
+            Ship((700, 600), sprite=SpriteManager.get('basic'), angle=-120),
+            Ship((100, 400), sprite=SpriteManager.get('basic')),
+            Ship((400, 700), sprite=SpriteManager.get('basic'), angle=90),
         ]
-        self.player               = Ship((375, 275), angle=135, speed=150)
+        self.player               = Ship((375, 275), sprite=SpriteManager.get('basic'), angle=135, speed=150)
         self.player_angular_speed = 150
         self.camera               = Camera((400, 300))
 

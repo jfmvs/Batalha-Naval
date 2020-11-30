@@ -20,3 +20,4 @@ Classes
 from .camera import *
 from .ship import *
 from .text   import *
+from .sprite_manager import *
