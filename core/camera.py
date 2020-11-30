@@ -1,5 +1,4 @@
 import pygame as pg
-from .ship import Ship
 
 
 class Camera:
@@ -41,9 +40,6 @@ class Camera:
         aumento o valor de `_zoom`
     zoom_out():
         diminui o valor de `_zoom`
-    get_modeled(renderable):
-        retorna uma superfície com as alterações necessárias para renderizar
-        `renderable`
     """
 
     _ZOOM_MIN = 0.3
@@ -111,27 +107,3 @@ class Camera:
         None
         """
         self.zoom -= 0.01
-
-    def get_modeled(self, renderable):
-        """
-        Descrição
-        ---------
-        Retorna um objeto pygame.Surface que representa como `renderable` deve
-        ser renderizado na tela
-
-        Parâmetro
-        ---------
-        renderable : any
-            um objeto a ser renderizado
-
-        Retorno
-        -------
-        pygame.Surface
-        """
-        if isinstance(renderable, Ship):
-            modeled = pg.transform.scale(renderable.sprite, (
-                int(renderable.sprite.get_width()  * self.zoom),
-                int(renderable.sprite.get_height() * self.zoom)
-            ))
-            modeled = pg.transform.rotate(modeled, renderable.angle)
-            return modeled

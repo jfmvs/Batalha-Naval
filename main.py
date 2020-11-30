@@ -21,6 +21,7 @@ class App:
 
         # itens do jogo
 
+        Renderer.init()
         self.world = WorldManager((5600, 1200), (800, 600))
 
         SpriteManager.load('basic', 'assets/player.png')
@@ -74,34 +75,22 @@ class App:
         for chunk in self.world.get_active_chunks(self.player.position):
             chunk_objs = self.world.get_objs(chunk)
             for obj in chunk_objs:
-                rotated = pg.transform.rotate(obj.sprite, obj.angle)
-                self._SCREEN.blit(rotated, (
-                    (obj.position.x - rotated.get_width()  // 2) - (self.camera.position.x - self._SCREEN_WIDTH  // 2),
-                    (obj.position.y - rotated.get_height() // 2) - (self.camera.position.y - self._SCREEN_HEIGHT // 2),
-                ))
+                Renderer.render_ship(self._SCREEN, obj, self.camera)
 
-
-        renderable = self.camera.get_modeled(self.player)
-        self._SCREEN.blit(renderable, (
-            (self.player.position.x - renderable.get_width()  // 2) - (self.camera.position.x - self._SCREEN_WIDTH  // 2),
-            (self.player.position.y - renderable.get_height() // 2) - (self.camera.position.y - self._SCREEN_HEIGHT // 2),
-        ))
+        Renderer.render_ship(self._SCREEN, self.player, self.camera)
 
     def _render_debug_data(self):
         """Dados para depuração"""
 
-        Text.render(self._SCREEN, 'camera pos:      x: {:.2f},     y: {:.2f}'.format(
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 5), msg='camera pos:      x: {:.2f},     y: {:.2f}'.format(
             self.camera.position[0], self.camera.position[1]
-        ), (10, 5), 16, color=(255,255,255))
-        Text.render(self._SCREEN, f'scale: {self.camera.zoom:.2f}', (10, 20), 16, color=(255,255,255))
-        Text.render(self._SCREEN, f'fps: {self._current_fps:}', (10, 40), 16, color=(255,255,255))
-        Text.render(self._SCREEN, 'player pos:     x: {:.2f},   y: {:.2f}'.format(
+        ))
+        Renderer.render_debug_msg(self._SCREEN, pos=(10,  20), msg=f'scale: {self.camera.zoom:.2f}')
+        Renderer.render_debug_msg(self._SCREEN, pos=(10,  40), msg=f'fps: {self._current_fps:}')
+        Renderer.render_debug_msg(self._SCREEN, pos=(10,  80), msg='player pos:     x: {:.2f},   y: {:.2f}'.format(
             *self.player.position
-            ), (10, 80), 16, color=(255,255,255)
-        )
-        Text.render(
-            self._SCREEN, f'player angle: {self.player.angle:.2f}', (10, 100), 16, color=(255,255,255)
-        )
+        ))
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 100), msg=f'player angle: {self.player.angle:.2f}')
 
     def run(self):
         """Iniciar jogo"""
