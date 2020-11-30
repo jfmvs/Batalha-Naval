@@ -21,10 +21,12 @@ class App:
 
         # itens do jogo
 
+        self.world = WorldManager((1600, 1200), (800, 600))
+
         SpriteManager.load('basic', 'assets/player.png')
         SpriteManager.rescale('basic', (120, 20))
 
-        self.npcs = [
+        npcs = [
             Ship((200, 100), sprite=SpriteManager.get('basic'), angle=70),
             Ship((500, 400), sprite=SpriteManager.get('basic'), angle=-90),
             Ship((600, 100), sprite=SpriteManager.get('basic'), angle=80),
@@ -32,7 +34,11 @@ class App:
             Ship((100, 400), sprite=SpriteManager.get('basic')),
             Ship((400, 700), sprite=SpriteManager.get('basic'), angle=90),
         ]
-        self.player               = Ship((375, 275), sprite=SpriteManager.get('basic'), angle=135, speed=150)
+
+        for npc in npcs:
+            self.world.add_obj(npc)
+
+        self.player               = Ship((400, 300), sprite=SpriteManager.get('basic'), angle=135, speed=150)
         self.player_angular_speed = 150
         self.camera               = Camera((400, 300))
 
@@ -53,27 +59,23 @@ class App:
         if kbd[pg.K_d]:
             self.player.rotate(dt * -self.player_angular_speed)
 
-        self.camera.position.x -= self.player.direction.x * 150 * dt
-        self.camera.position.y += self.player.direction.y * 150 * dt
-
     def _render(self):
         """Construir cena"""
 
-        for npc in self.npcs:
-            if (
-                0 <= npc.position.x + self.camera.position.x <= self._SCREEN_WIDTH and
-                0 <= npc.position.y + self.camera.position.y <= self._SCREEN_HEIGHT
-            ):
-                renderable = self.camera.get_modeled(npc)
-                self._SCREEN.blit(renderable, (
-                    npc.position.x + self.camera.position.x - renderable.get_width()  // 2,
-                    npc.position.y + self.camera.position.y - renderable.get_height() // 2,
+        for chunk in self.world.get_active_chunks(self.player.position):
+            chunk_objs = self.world.get_objs(chunk)
+            for obj in chunk_objs:
+                rotated = pg.transform.rotate(obj.sprite, obj.angle)
+                self._SCREEN.blit(rotated, (
+                    obj.position.x - rotated.get_width()  // 2,
+                    obj.position.y - rotated.get_height() // 2,
                 ))
+
 
         renderable = self.camera.get_modeled(self.player)
         self._SCREEN.blit(renderable, (
-            (self._SCREEN_WIDTH  - renderable.get_width() ) // 2,
-            (self._SCREEN_HEIGHT - renderable.get_height()) // 2,
+            self.player.position.x - (renderable.get_width() ) // 2,
+            self.player.position.y - (renderable.get_height()) // 2,
         ))
 
     def _render_debug_data(self):
