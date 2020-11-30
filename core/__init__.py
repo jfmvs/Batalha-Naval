@@ -14,7 +14,9 @@ Classes
     Text
         contém métodos estáticos que facilitam a renderização de texto
         em objetos pygame.Surface.
-
+    SpriteManager
+        lida com o carregamento e armazenamento de sprites para que
+        possam ser reutilizados por múltiplos objetos
 """
 
 from .camera import *
