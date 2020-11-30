@@ -50,8 +50,8 @@ class App:
         if kbd[pg.K_d]:
             self.player.rotate(dt * -self.player_angular_speed)
 
-        self.camera.position[0] -= self.player.direction.x * 150 * dt
-        self.camera.position[1] += self.player.direction.y * 150 * dt
+        self.camera.position.x -= self.player.direction.x * 150 * dt
+        self.camera.position.y += self.player.direction.y * 150 * dt
 
     def _render(self):
         """Construir cena"""
@@ -59,8 +59,8 @@ class App:
         for npc in self.npcs:
             renderable = self.camera.get_modeled(npc)
             self._SCREEN.blit(renderable, (
-                npc.position.x + self.camera.position[0] - renderable.get_width()  // 2,
-                npc.position.y + self.camera.position[1] - renderable.get_height() // 2,
+                npc.position.x + self.camera.position.x - renderable.get_width()  // 2,
+                npc.position.y + self.camera.position.y - renderable.get_height() // 2,
             ))
 
         renderable = self.camera.get_modeled(self.player)

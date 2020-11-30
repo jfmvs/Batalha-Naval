@@ -63,7 +63,7 @@ class Camera:
             a escala dos objetos renderizáveis (default  1.0)
         """
 
-        self._position = list(pos)
+        self._position = pg.Vector2(pos)
         self._zoom     = zoom
 
     @property
@@ -71,9 +71,9 @@ class Camera:
         return self._position
 
     @position.setter
-    def position(self, value: (list, tuple)):
-        self._position[0] = value[0]
-        self._position[1] = value[1]
+    def position(self, value):
+        self._position.x = value[0]
+        self._position.y = value[1]
 
     @property
     def zoom(self):
