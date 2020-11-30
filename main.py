@@ -57,11 +57,15 @@ class App:
         """Construir cena"""
 
         for npc in self.npcs:
-            renderable = self.camera.get_modeled(npc)
-            self._SCREEN.blit(renderable, (
-                npc.position.x + self.camera.position.x - renderable.get_width()  // 2,
-                npc.position.y + self.camera.position.y - renderable.get_height() // 2,
-            ))
+            if (
+                0 <= npc.position.x + self.camera.position.x <= self._SCREEN_WIDTH and
+                0 <= npc.position.y + self.camera.position.y <= self._SCREEN_HEIGHT
+            ):
+                renderable = self.camera.get_modeled(npc)
+                self._SCREEN.blit(renderable, (
+                    npc.position.x + self.camera.position.x - renderable.get_width()  // 2,
+                    npc.position.y + self.camera.position.y - renderable.get_height() // 2,
+                ))
 
         renderable = self.camera.get_modeled(self.player)
         self._SCREEN.blit(renderable, (
