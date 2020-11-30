@@ -81,6 +81,10 @@ class Ship:
     def center(self):
         return self._position.x, self._position.y
 
+    @property
+    def sprite(self):
+        return self._sprite
+
     def update(self, dt: float):
         """
         Descrição
