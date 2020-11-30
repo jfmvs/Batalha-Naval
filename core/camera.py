@@ -6,8 +6,8 @@ class Camera:
     """
     Descrição
     ---------
-    O estado da classe determina que região do mundo será renderizada
-    na janela do jogo.
+    O estado da classe altera a forma como um objeto é renderizado para
+    melhor o representar no mundo
 
     Atributos
     ---------
@@ -17,19 +17,11 @@ class Camera:
         o maior valor aceitável para a escala
     _position : list[float]
         a posição central da câmera
-    _width : int
-        largura da região visível do mundo
-    _height : int
-        altura da região visível do mundo
     _zoom : float
-        escala da região vísivel do mundo
-    _target : Player, opcional
-        se atribuído, a câmera manterá `_position` como sua posição
+        escala de um objeto renderizável
 
     Propriedades
     ------------
-    rect : tuple
-        retorna os dados da região visível do mundo
     posistion : list
         retorna o valor de `_position`
     zoom : float
@@ -49,18 +41,15 @@ class Camera:
         aumento o valor de `_zoom`
     zoom_out():
         diminui o valor de `_zoom`
-    get_modeled(surface):
-        retorna a área visível de surface como um objeto pygame.Surface
-    set_focus(target):
-        atribui um valor para `_target`
-    update():
-        `_position` é alterado para a posição de `_target`
+    get_modeled(renderable):
+        retorna uma superfície com as alterações necessárias para renderizar
+        `renderable`
     """
 
     _ZOOM_MIN = 0.3
     _ZOOM_MAX = 2.0
 
-    def __init__(self, pos: (list, tuple), w: int, h: int):
+    def __init__(self, pos: (list, tuple), zoom=1.0):
         """
         Descrição
         ---------
@@ -70,25 +59,12 @@ class Camera:
         ----------
         pos : list, tuple
             posição central da câmera no mundo
-        w : int
-            largura da região visível do mundo
-        h : int
-            altura da regiãp visível do mundo
+        zoom : float, opcional
+            a escala dos objetos renderizáveis (default  1.0)
         """
 
         self._position = list(pos)
-        self._width    = w
-        self._height   = h
-        self._zoom     = 1.0
-        self._target   = None
-
-    @property
-    def rect(self):
-        return (
-            self.position[0] - self._width // 2,
-            self.position[1] - self._height // 2,
-            self._width, self._height
-        )
+        self._zoom     = zoom
 
     @property
     def position(self):
@@ -136,54 +112,26 @@ class Camera:
         """
         self.zoom -= 0.01
 
-    def get_modeled(self, surface: pg.Surface):
+    def get_modeled(self, renderable):
         """
         Descrição
         ---------
-        Retorna um objeto pygame.Surface que representa a área visível
-        do parâmetro `surface`
+        Retorna um objeto pygame.Surface que representa como `renderable` deve
+        ser renderizado na tela
 
         Parâmetro
         ---------
-        surface : pygame.Surface
-            o mundo que a câmera observa e restringe
+        renderable : any
+            um objeto a ser renderizado
 
         Retorno
         -------
         pygame.Surface
         """
-        modeled = pg.Surface((self._width, self._height))
-        tmp = pg.transform.scale(surface, (
-            int(surface.get_width()  * self.zoom),
-            int(surface.get_height() * self.zoom)
-        ))
-        modeled.blit(tmp, (0, 0), self.rect)
-        return modeled
-
-    def set_focus(self, target: Ship):
-        """
-        Descrição
-        ---------
-        Setter para `_target`
-
-        Retorno
-        -------
-        None
-        """
-        self._target = target
-
-    def update(self):
-        """
-        Descrição
-        ---------
-        Altera a posição da câmera para que centro de `_target` seja
-        mantido como centro da janela se houver um valor atribuído a
-        `_target`
-
-        Retorno
-        -------
-        None
-        """
-        if self._target:
-            self.position[0] = self._target.center[0] * self.zoom
-            self.position[1] = self._target.center[1] * self.zoom
+        if isinstance(renderable, Ship):
+            modeled = pg.transform.scale(renderable.sprite, (
+                int(renderable.sprite.get_width()  * self.zoom),
+                int(renderable.sprite.get_height() * self.zoom)
+            ))
+            modeled = pg.transform.rotate(modeled, renderable.angle)
+            return modeled

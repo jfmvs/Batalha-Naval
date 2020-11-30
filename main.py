@@ -12,7 +12,7 @@ class App:
         self._SCREEN_WIDTH     = 800
         self._SCREEN_HEIGHT    = 600
         self._SCREEN           = pg.display.set_mode((self._SCREEN_WIDTH, self._SCREEN_HEIGHT))
-        self._BACKGROUND_COLOR = (53, 54, 55)
+        self._BACKGROUND_COLOR = (57, 141, 212)
         self._CLOCK            = pg.time.Clock()
         self._TARGET_FPS       = 60
         self._running          = False
@@ -21,7 +21,6 @@ class App:
 
         # itens do jogo
 
-        self.framebuffer = pg.Surface((1600, 1200))
         self.npcs = [
             Ship((200, 100), angle=70),
             Ship((500, 400), angle=-90),
@@ -32,8 +31,7 @@ class App:
         ]
         self.player               = Ship((375, 275), angle=135, speed=150)
         self.player_angular_speed = 150
-        self.camera               = Camera((400, 300), 800, 600)
-        self.camera.set_focus(self.player)
+        self.camera               = Camera((400, 300))
 
     def _update(self, dt, event):
         """Mudanças de estado"""
@@ -48,29 +46,28 @@ class App:
         kbd = pg.key.get_pressed()
 
         if kbd[pg.K_a]:
-            self.player.rotate(dt * -self.player_angular_speed)
-        if kbd[pg.K_d]:
             self.player.rotate(dt *  self.player_angular_speed)
+        if kbd[pg.K_d]:
+            self.player.rotate(dt * -self.player_angular_speed)
 
-        if kbd[pg.K_UP]:
-            self.camera.zoom_in()
-        elif kbd[pg.K_DOWN]:
-            self.camera.zoom_out()
-
-        self.player.update(dt)
-        self.camera.update()
+        self.camera.position[0] -= self.player.direction.x * 150 * dt
+        self.camera.position[1] += self.player.direction.y * 150 * dt
 
     def _render(self):
         """Construir cena"""
 
-        # renderize o mundo em framebuffer
-
-        self.framebuffer.fill((57, 141, 212))
-
         for npc in self.npcs:
-            npc.draw(self.framebuffer)
+            renderable = self.camera.get_modeled(npc)
+            self._SCREEN.blit(renderable, (
+                npc.position.x + self.camera.position[0] - renderable.get_width()  // 2,
+                npc.position.y + self.camera.position[1] - renderable.get_height() // 2,
+            ))
 
-        self.player.draw(self.framebuffer)
+        renderable = self.camera.get_modeled(self.player)
+        self._SCREEN.blit(renderable, (
+            (self._SCREEN_WIDTH  - renderable.get_width() ) // 2,
+            (self._SCREEN_HEIGHT - renderable.get_height()) // 2,
+        ))
 
     def _render_debug_data(self):
         """Dados para depuração"""
@@ -99,7 +96,6 @@ class App:
             self._update(dt, event)
             self._SCREEN.fill(self._BACKGROUND_COLOR)
             self._render()
-            self._SCREEN.blit(self.camera.get_modeled(self.framebuffer), (0,0))
             if '-o' not in sys.argv:
                 self._render_debug_data()
             pg.display.update()
