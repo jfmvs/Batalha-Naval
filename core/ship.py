@@ -13,13 +13,15 @@ class Ship:
     ---------
     _position : pygame.Vector2
         posição central do navio
+    _sprite : pygame.Surface
+        referência a usado para renderizar a imagem que representa o
+        navio
     _speed : int
         taxa de mudança de posição em pixel/s
     _angle : float
         ângulo da direção do navio com o eixo x
-    _sprite : pygame.Surface
-        referência a usado para renderizar a imagem que representa o
-        navio
+    _angular_speed : float
+        taxa de mudança de ângulo em grau/s
 
     Propriedades
     ------------
@@ -31,16 +33,20 @@ class Ship:
         retorna o valor de `_position`
     center : pygame.Vector2
         retorna as coordenadas do centro do navio
+    speed : float
+        retorna o valor de `_speed`
+    angular_speed : float
+        retorna o valor de `_angular_speed`
 
     Métodos
     -------
-    update(dt):
+    move(dt):
         muda a posição do navio
-    rotate(angle):
+    rotate(dt, reverse):
         muda o ângulo do navio
     """
 
-    def __init__(self, pos: (list, tuple, pg.Vector2), sprite: pg.Surface, speed: int = 250, angle: float = 0):
+    def __init__(self, pos: (list, tuple, pg.Vector2), sprite: pg.Surface, **kwargs):
         """
         Descrição
         ---------
@@ -56,10 +62,11 @@ class Ship:
         angle : float, opcional
             ângulo do navio com o eixo x (default 0)
         """
-        self._position = pg.Vector2(*pos)
-        self._speed    = speed
-        self._angle    = angle
-        self._sprite   = sprite
+        self._position      = pg.Vector2(*pos)
+        self._sprite        = sprite
+        self._speed         = kwargs.get('speed', 250)
+        self._angle         = kwargs.get('angle', 0)
+        self._angular_speed = kwargs.get('angular_speed', 150)
 
     @property
     def direction(self):
@@ -80,10 +87,18 @@ class Ship:
         return self._position.x, self._position.y
 
     @property
+    def speed(self):
+        return self._speed
+
+    @property
+    def angular_speed(self):
+        return self._angular_speed
+
+    @property
     def sprite(self):
         return self._sprite
 
-    def update(self, dt: float):
+    def move(self, dt: float):
         """
         Descrição
         ------
@@ -98,9 +113,10 @@ class Ship:
         -------
         None
         """
-        self._position += self.direction * self._speed * dt
+        self._position.x += self.direction.x * self._speed * dt
+        self._position.y -= self.direction.y * self._speed * dt
 
-    def rotate(self, angle: float):
+    def rotate(self, dt: float, reverse: bool = False):
         """
         Descrição
         ---------
@@ -115,6 +131,7 @@ class Ship:
         -------
         None
         """
-        self._angle += angle
-        self._angle = self._angle % 360
+        mod = -1 if reverse else 1
+        self._angle += self._angular_speed * mod * dt
+        self._angle %= 360
 
