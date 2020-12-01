@@ -29,11 +29,11 @@ class App:
 
         npcs = [
             Ship(( 200, 100), sprite=SpriteManager.get('basic'), angle=70),
-            Ship((1200, 100), sprite=SpriteManager.get('basic'), angle=-90),
+            Ship((1200, 100), sprite=SpriteManager.get('basic'), angle=-104),
             Ship((2000, 100), sprite=SpriteManager.get('basic'), angle=80),
             Ship((2600, 100), sprite=SpriteManager.get('basic'), angle=-120),
-            Ship((3300, 100), sprite=SpriteManager.get('basic')),
-            Ship((4800, 100), sprite=SpriteManager.get('basic'), angle=90),
+            Ship((3300, 100), sprite=SpriteManager.get('basic'), angle=45),
+            Ship((4800, 100), sprite=SpriteManager.get('basic'), angle=135),
         ]
 
         for npc in npcs:
