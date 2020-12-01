@@ -68,7 +68,7 @@ class Ship:
 
     @property
     def direction(self):
-        direction = pg.Vector2(-1.0, 0.0)
+        direction = pg.Vector2(1.0, 0.0)
         direction.rotate_ip(self._angle)
         return direction
 
