@@ -1,4 +1,5 @@
 import sys
+from random import randint
 import pygame as pg
 from core import *
 
@@ -25,22 +26,18 @@ class App:
 
         SpriteManager.load('basic', 'assets/basic-ship.png')
         SpriteManager.load('player', 'assets/ship-stage-2.png')
-        SpriteManager.load('crate', 'assets/floating-crate.png')
+        SpriteManager.load('crate', 'assets/floating-crate-3.png')
         SpriteManager.rescale('basic', (120, 20))
         SpriteManager.rescale('player', (204, 20))
-        # SpriteManager.rescale('crate', (16, 16))
 
-        self.npcs = [
-            Ship((400, 200), sprite=SpriteManager.get('basic'), angle=70),
-            Ship((900, 500), sprite=SpriteManager.get('basic'), angle=-104),
-            Ship((200, 600), sprite=SpriteManager.get('basic'), angle=80),
-            Ship((500, 800), sprite=SpriteManager.get('basic'), angle=-120),
-            Ship((300,   4), sprite=SpriteManager.get('basic'), angle=45),
-            Ship((800,  20), sprite=SpriteManager.get('basic'), angle=135),
+        self.npcs   = [
+            Ship((randint(0, 1600), randint(0, 1200)), sprite=SpriteManager.get('basic'), angle=randint(0, 360))
+            for _ in range(10)
         ]
+        self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
 
-        self.player               = Ship((400, 300), sprite=SpriteManager.get('player'), angle=135, speed=150)
-        self.camera               = Camera((400, 300))
+        self.player = Ship((400, 300), sprite=SpriteManager.get('player'), angle=135, speed=150)
+        self.camera = Camera((400, 300))
 
     def _update(self, dt, event):
         """Mudanças de estado"""
@@ -67,8 +64,9 @@ class App:
 
         for npc in self.npcs:
             Renderer.render_ship(self._SCREEN, npc, self.camera)
+        for crate_pos in self.crates:
+            Renderer.render_sprite(self._SCREEN, SpriteManager.get('crate'), crate_pos, self.camera)
 
-        Renderer.render_sprite(self._SCREEN, SpriteManager.get('crate'), (200, 100), self.camera)
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
 
     def _render_debug_data(self):
