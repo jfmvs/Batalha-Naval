@@ -22,18 +22,22 @@ class App:
         # itens do jogo
 
         Renderer.init()
-        self.world = WorldManager((5600, 1200), (800, 600))
+        self.world = WorldManager((5600, 4200), (800, 600))
 
-        SpriteManager.load('basic', 'assets/player.png')
+        SpriteManager.load('basic', 'assets/basic-ship.png')
+        SpriteManager.load('player', 'assets/ship-stage-2.png')
+        SpriteManager.load('crate', 'assets/floating-crate.png')
         SpriteManager.rescale('basic', (120, 20))
+        SpriteManager.rescale('player', (204, 20))
+        # SpriteManager.rescale('crate', (16, 16))
 
         npcs = [
-            Ship(( 200, 100), sprite=SpriteManager.get('basic'), angle=70),
-            Ship((1200, 100), sprite=SpriteManager.get('basic'), angle=-104),
-            Ship((2000, 100), sprite=SpriteManager.get('basic'), angle=80),
-            Ship((2600, 100), sprite=SpriteManager.get('basic'), angle=-120),
-            Ship((3300, 100), sprite=SpriteManager.get('basic'), angle=45),
-            Ship((4800, 100), sprite=SpriteManager.get('basic'), angle=135),
+            Ship((2000, 2100), sprite=SpriteManager.get('basic'), angle=70),
+            Ship((1900, 1500), sprite=SpriteManager.get('basic'), angle=-104),
+            Ship((2000, 3600), sprite=SpriteManager.get('basic'), angle=80),
+            Ship((3500, 1800), sprite=SpriteManager.get('basic'), angle=-120),
+            Ship((3300, 4000), sprite=SpriteManager.get('basic'), angle=45),
+            Ship((4800, 2000), sprite=SpriteManager.get('basic'), angle=135),
         ]
 
         for npc in npcs:
@@ -41,7 +45,7 @@ class App:
 
         self.active_chunks       = None
 
-        self.player               = Ship((400, 300), sprite=SpriteManager.get('basic'), angle=135, speed=150)
+        self.player               = Ship((400, 300), sprite=SpriteManager.get('player'), angle=135, speed=150)
         self.camera               = Camera((400, 300))
 
     def _update(self, dt, event):
@@ -74,6 +78,7 @@ class App:
             for obj in chunk_objs:
                 Renderer.render_ship(self._SCREEN, obj, self.camera)
 
+        Renderer.render_sprite(self._SCREEN, SpriteManager.get('crate'), (2500, 1500), self.camera)
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
 
     def _render_debug_data(self):
