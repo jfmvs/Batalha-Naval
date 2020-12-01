@@ -42,7 +42,6 @@ class App:
         self.active_chunks       = None
 
         self.player               = Ship((400, 300), sprite=SpriteManager.get('basic'), angle=135, speed=150)
-        self.player_angular_speed = 150
         self.camera               = Camera((400, 300))
 
     def _update(self, dt, event):
@@ -58,18 +57,12 @@ class App:
         kbd = pg.key.get_pressed()
 
         if kbd[pg.K_a]:
-            self.camera.position.x -= 250 * dt
-            self.player.position.x -= 250 * dt
+            self.player.rotate(dt)
         if kbd[pg.K_d]:
-            self.camera.position.x += 250 * dt
-            self.player.position.x += 250 * dt
+            self.player.rotate(dt, True)
 
-        if kbd[pg.K_w]:
-            self.camera.position.y -= 250 * dt
-            self.player.position.y -= 250 * dt
-        elif kbd[pg.K_s]:
-            self.camera.position.y += 250 * dt
-            self.player.position.y += 250 * dt
+        self.player.move(dt)
+        self.camera.follow(self.player, dt)
 
         self.active_chunks = self.world.get_active_chunks(self.player.position)
 
