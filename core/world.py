@@ -32,6 +32,9 @@ class WorldManager:
         retorna a lista de objetos do chunk na posição `chunk`
     get_active_chunks(pos):
         retorna com os chunks mais próximos da posição `pos`
+    clamp_coords(coords):
+        garante que `coords` seja uma posição válida na matriz dos
+        chunks
     """
     def __init__(self, world_size, chunk_size):
         """
@@ -125,11 +128,37 @@ class WorldManager:
         dist.y = max([min([dist.y, 1]), -1])
 
         active = [
-            (int(         main.x), int(         main.y)),
-            (int(dist.x + main.x), int(         main.y)),
-            (int(         main.x), int(dist.y + main.y)),
-            (int(dist.x + main.x), int(dist.y + main.y))
+            self.clamp_coords((          main.x,          main.y )),
+            self.clamp_coords(( dist.x + main.x,          main.y )),
+            self.clamp_coords((          main.x, dist.y + main.y )),
+            self.clamp_coords(( dist.x + main.x, dist.y + main.y ))
         ]
         active = list(dict.fromkeys(active))
         return active
 
+    def clamp_coords(self, coords):
+        """
+        Descrição
+        ---------
+        Caso um dos valores de `coords` esteja fora de seu intervalo
+        válido, retorna uma tupla que substitui o valor inválido pelo
+        limite. Se os dois forem válidos, retorna coords
+
+        Parâmetros
+        ----------
+        coords : list, tuple
+            posição de um chunk na matriz
+
+        Retorno
+        -------
+        tuple
+        """
+        pos = [int(coords[0]), int(coords[1])]
+
+        pos[0] = min([pos[0], self._columns])
+        pos[1] = min([pos[1], self._rows])
+
+        pos[0] = max([pos[0], 0])
+        pos[1] = max([pos[1], 0])
+
+        return tuple(pos)
