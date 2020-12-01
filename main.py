@@ -17,7 +17,7 @@ class App:
         self._TARGET_FPS       = 60
         self._running          = False
         self._current_fps      = 60
-        pg.display.set_caption('Batalha Naval - Camera')
+        pg.display.set_caption('Batalha Naval - Testes')
 
         # itens do jogo
 
