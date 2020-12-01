@@ -13,9 +13,6 @@ Classes
     SpriteManager
         lida com o carregamento e armazenamento de sprites para que
         possam ser reutilizados por múltiplos objetos
-    WorldManager
-        divide o mundo em pedaços chamados chunks para reduzir o número
-        de itens com os quais é preciso lidar
     Renderer
         contém a lógica de renderização dos objetos do jogo
 """
@@ -23,5 +20,4 @@ Classes
 from .camera import *
 from .ship import *
 from .sprite_manager import *
-from .world import *
 from .renderer import *

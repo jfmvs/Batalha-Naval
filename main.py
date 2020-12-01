@@ -22,7 +22,6 @@ class App:
         # itens do jogo
 
         Renderer.init()
-        self.world = WorldManager((5600, 4200), (800, 600))
 
         SpriteManager.load('basic', 'assets/basic-ship.png')
         SpriteManager.load('player', 'assets/ship-stage-2.png')
@@ -31,19 +30,14 @@ class App:
         SpriteManager.rescale('player', (204, 20))
         # SpriteManager.rescale('crate', (16, 16))
 
-        npcs = [
-            Ship((2000, 2100), sprite=SpriteManager.get('basic'), angle=70),
-            Ship((1900, 1500), sprite=SpriteManager.get('basic'), angle=-104),
-            Ship((2000, 3600), sprite=SpriteManager.get('basic'), angle=80),
-            Ship((3500, 1800), sprite=SpriteManager.get('basic'), angle=-120),
-            Ship((3300, 4000), sprite=SpriteManager.get('basic'), angle=45),
-            Ship((4800, 2000), sprite=SpriteManager.get('basic'), angle=135),
+        self.npcs = [
+            Ship((400, 200), sprite=SpriteManager.get('basic'), angle=70),
+            Ship((900, 500), sprite=SpriteManager.get('basic'), angle=-104),
+            Ship((200, 600), sprite=SpriteManager.get('basic'), angle=80),
+            Ship((500, 800), sprite=SpriteManager.get('basic'), angle=-120),
+            Ship((300,   4), sprite=SpriteManager.get('basic'), angle=45),
+            Ship((800,  20), sprite=SpriteManager.get('basic'), angle=135),
         ]
-
-        for npc in npcs:
-            self.world.add_obj(npc)
-
-        self.active_chunks       = None
 
         self.player               = Ship((400, 300), sprite=SpriteManager.get('player'), angle=135, speed=150)
         self.camera               = Camera((400, 300))
@@ -68,17 +62,13 @@ class App:
         self.player.move(dt)
         self.camera.follow(self.player, dt)
 
-        self.active_chunks = self.world.get_active_chunks(self.player.position)
-
     def _render(self):
         """Construir cena"""
 
-        for chunk in self.active_chunks:
-            chunk_objs = self.world.get_objs(chunk)
-            for obj in chunk_objs:
-                Renderer.render_ship(self._SCREEN, obj, self.camera)
+        for npc in self.npcs:
+            Renderer.render_ship(self._SCREEN, npc, self.camera)
 
-        Renderer.render_sprite(self._SCREEN, SpriteManager.get('crate'), (2500, 1500), self.camera)
+        Renderer.render_sprite(self._SCREEN, SpriteManager.get('crate'), (200, 100), self.camera)
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
 
     def _render_debug_data(self):
@@ -88,10 +78,6 @@ class App:
             self.camera.position[0], self.camera.position[1]
         ))
         Renderer.render_debug_msg(self._SCREEN, pos=(10, 20), msg=f'scale: {self.camera.zoom:.2f}')
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 40), msg='active chunks:')
-        for i in range(len(self.active_chunks)):
-            chunk = self.active_chunks[i]
-            Renderer.render_debug_msg(self._SCREEN, pos=(110 + 40 * i, 40), msg=str(chunk))
         Renderer.render_debug_msg(self._SCREEN, pos=(10, 60), msg='player pos:     x: {:.2f},   y: {:.2f}'.format(
             *self.player.position
         ))
