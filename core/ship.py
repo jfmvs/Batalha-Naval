@@ -31,8 +31,6 @@ class Ship:
         retorna o valor de `_angle`
     position : pygame.Vector2
         retorna o valor de `_position`
-    center : pygame.Vector2
-        retorna as coordenadas do centro do navio
     speed : float
         retorna o valor de `_speed`
     angular_speed : float
@@ -81,10 +79,6 @@ class Ship:
     @property
     def position(self):
         return self._position
-
-    @property
-    def center(self):
-        return self._position.x, self._position.y
 
     @property
     def speed(self):
