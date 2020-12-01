@@ -1,4 +1,5 @@
 import pygame as pg
+from .ship import Ship
 
 
 class Camera:
@@ -18,6 +19,8 @@ class Camera:
         a posição central da câmera
     _zoom : float
         escala de um objeto renderizável
+    _speed : float
+        deslocamento da câmera em pixel/s
 
     Propriedades
     ------------
@@ -40,12 +43,14 @@ class Camera:
         aumento o valor de `_zoom`
     zoom_out():
         diminui o valor de `_zoom`
+    follow(target, dt):
+        faz a câmera se deslocar em direção a `target`
     """
 
     _ZOOM_MIN = 0.3
     _ZOOM_MAX = 2.0
 
-    def __init__(self, pos: (list, tuple), zoom=1.0):
+    def __init__(self, pos: (list, tuple), zoom=1.0, speed=150):
         """
         Descrição
         ---------
@@ -57,10 +62,13 @@ class Camera:
             posição central da câmera no mundo
         zoom : float, opcional
             a escala dos objetos renderizáveis (default  1.0)
+        speed : float, opcional
+            deslocamento da câmera em pixels por segundo (default 150)
         """
 
         self._position = pg.Vector2(pos)
         self._zoom     = zoom
+        self._speed   = speed
 
     @property
     def position(self):
@@ -107,3 +115,27 @@ class Camera:
         None
         """
         self.zoom -= 0.01
+
+    def follow(self, target: Ship, dt: float):
+        """
+        Descrição
+        ---------
+        Desloca a câmera em direção a um navio numa quantidade de
+        pixels determina pela sua velocidade e pelo intervalo de tempo
+        `dt`
+
+        Parâmetros
+        ----------
+        target : Ship
+            alvo a ser seguido pela câmera
+        dt : float
+            intervalo de tempo entre frames
+
+        Retorno
+        -------
+        None
+        """
+        direction = target.position - self.position
+        if direction.length_squared() != 0:
+            direction.normalize_ip()
+        self.position += direction * self._speed * dt
