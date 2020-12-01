@@ -39,6 +39,8 @@ class App:
         for npc in npcs:
             self.world.add_obj(npc)
 
+        self.active_chunks       = None
+
         self.player               = Ship((400, 300), sprite=SpriteManager.get('basic'), angle=135, speed=150)
         self.player_angular_speed = 150
         self.camera               = Camera((400, 300))
@@ -69,10 +71,12 @@ class App:
             self.camera.position.y += 250 * dt
             self.player.position.y += 250 * dt
 
+        self.active_chunks = self.world.get_active_chunks(self.player.position)
+
     def _render(self):
         """Construir cena"""
 
-        for chunk in self.world.get_active_chunks(self.player.position):
+        for chunk in self.active_chunks:
             chunk_objs = self.world.get_objs(chunk)
             for obj in chunk_objs:
                 Renderer.render_ship(self._SCREEN, obj, self.camera)
@@ -85,12 +89,16 @@ class App:
         Renderer.render_debug_msg(self._SCREEN, pos=(10, 5), msg='camera pos:      x: {:.2f},     y: {:.2f}'.format(
             self.camera.position[0], self.camera.position[1]
         ))
-        Renderer.render_debug_msg(self._SCREEN, pos=(10,  20), msg=f'scale: {self.camera.zoom:.2f}')
-        Renderer.render_debug_msg(self._SCREEN, pos=(10,  40), msg=f'fps: {self._current_fps:}')
-        Renderer.render_debug_msg(self._SCREEN, pos=(10,  80), msg='player pos:     x: {:.2f},   y: {:.2f}'.format(
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 20), msg=f'scale: {self.camera.zoom:.2f}')
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 40), msg='active chunks:')
+        for i in range(len(self.active_chunks)):
+            chunk = self.active_chunks[i]
+            Renderer.render_debug_msg(self._SCREEN, pos=(110 + 40 * i, 40), msg=str(chunk))
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 60), msg='player pos:     x: {:.2f},   y: {:.2f}'.format(
             *self.player.position
         ))
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 100), msg=f'player angle: {self.player.angle:.2f}')
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 80), msg=f'player angle: {self.player.angle:.2f}')
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 100), msg=f'fps: {self._current_fps:}')
 
     def run(self):
         """Iniciar jogo"""
