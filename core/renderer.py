@@ -40,7 +40,7 @@ class Renderer:
         Renderer._debug_font = pg.font.SysFont('times new roman', 16)
 
     @staticmethod
-    def render_debug_msg(surface, msg, pos, centered=False, color=(255, 255, 255)):
+    def render_debug_msg(surface, msg, pos, centered: bool = False, color: (list, tuple) = (255, 255, 255)):
         """
         Descrição
         ---------
@@ -94,16 +94,44 @@ class Renderer:
         -------
         None
         """
-
         rotated = pg.transform.rotate(ship.sprite, ship.angle)
+        pos     = (ship.position.x, ship.position.y)
+        Renderer.render_sprite(surface, rotated, pos, centered=True, camera=camera)
 
+    @staticmethod
+    def render_sprite(surface: pg.Surface, sprite: pg.Surface, pos: (list, tuple),
+                      camera: (Camera, None) = None, centered: bool = False):
+        """
+        Descrição
+        ---------
+        Renderiza uma sprite em `surface`
+
+        Parâmetros
+        ----------
+        surface : pygame.Surface
+            superfície onde a sprite será renderizada
+        sprite : pygame.Surface
+            sprite a ser renderizada em `surface`
+        pos : list, tuple
+            posição onde a sprite deve ser renderizada
+        camera : Camera, None, opcional
+            camera que alterará a forma como `sprite` é renderizado
+            (default  None)
+        centered : bool, opcional
+            determina se `pos` deve ser tratado como canto superior
+            esquerdo ou posição central da sprite
+
+        Retorno
+        -------
+        None
+        """
+        coords = list(pos)
+
+        if centered:
+            coords[0] -= sprite.get_width() // 2
+            coords[1] -= sprite.get_height() // 2
         if camera is not None:
-            surface.blit(rotated, (
-                (ship.position.x - rotated.get_width()  // 2) - (camera.position.x - surface.get_width()  // 2),
-                (ship.position.y - rotated.get_height() // 2) - (camera.position.y - surface.get_height() // 2),
-            ))
-        else:
-            surface.blit(rotated, (
-                ship.position.x - rotated.get_width() // 2,
-                ship.position.y - rotated.get_height() // 2,
-            ))
+            coords[0] -= camera.position.x - surface.get_width() // 2
+            coords[1] -= camera.position.y - surface.get_height() // 2
+
+        surface.blit(sprite, coords)
