@@ -64,7 +64,7 @@ class Ship:
         self._original_sprite  = sprite
         self._speed            = kwargs.get('speed', 250)
         self._angle            = kwargs.get('angle', 0)
-        self._angular_speed    = kwargs.get('angular_speed', 150)
+        self._angular_speed    = kwargs.get('angular_speed', 50)
         self._render_sprite    = pg.transform.rotate(self._original_sprite, self._angle)
 
     @property
