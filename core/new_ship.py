@@ -214,15 +214,7 @@ class Ship:
 
         self.image = pg.transform.rotate(self.image, self._angle)
 
-    def update(self, fps, events):
-        self.image = self.original_image.copy()
-
-        """
-        
-        Lógica da IA a ser definida por Lais
-        
-        """
-
+    def move(self):
         if self.speed_target > 4:
             self.speed_target = 4
         elif self.speed_target < 0:
@@ -233,11 +225,21 @@ class Ship:
         elif self.speed > self.speed_target_list[self.speed_target]:
             self.speed = max(self.speed_target_list[self.speed_target], self.speed - self.acceleration)
 
-        self.rotate()
-
         self._position = [round(self._position[0] - (math.cos(rad(self._angle)) * self.speed / fps), 2),
                          round(self._position[1] + (math.sin(rad(self._angle)) * self.speed / fps), 2)]
 
+
+    def update(self, fps, events):
+        self.image = self.original_image.copy()
+
+        """
+        
+        Lógica da IA a ser definida por Lais
+        
+        """
+
+        self.rotate()
+        self.move()
 
         # target definido por IA
         target = (0,0)
@@ -283,20 +285,8 @@ class Player(Ship):
                 elif event.key == pg.K_d:
                     self.turning_right = False
 
-        if self.speed_target > 4:
-            self.speed_target = 4
-        elif self.speed_target < 0:
-            self.speed_target = 0
-
-        if self.speed < self.speed_target_list[self.speed_target]:
-            self.speed = min(self.speed_target_list[self.speed_target], self.speed + self.acceleration)
-        elif self.speed > self.speed_target_list[self.speed_target]:
-            self.speed = max(self.speed_target_list[self.speed_target], self.speed - self.acceleration)
-
         self.rotate()
-
-        self._position = [round(self._position[0] - (math.cos(rad(self._angle)) * self.speed / fps), 2),
-                         round(self._position[1] + (math.sin(rad(self._angle)) * self.speed / fps), 2)]
+        self.move()
 
         target = pg.mouse.get_pos()
 
