@@ -40,6 +40,8 @@ class App:
         self.player = Ship((400, 300), sprite=SpriteManager.get('ship'), stage=2, gun_type='1x3', guns=4)
         self.camera = Camera((400, 300))
 
+        self.crate_mask = pg.mask.from_surface(SpriteManager.get('crate'))
+
     def _update(self, dt, event):
         """Mudanças de estado"""
 
@@ -59,6 +61,19 @@ class App:
 
         self.player.update(dt, event)
         self.camera.center(self.player)
+
+        player_mask = pg.mask.from_surface(self.player.sprite)
+        for crate_pos in self.crates:
+            offset = (
+                int(self.player.position.x - self.player.sprite.get_width()  / 2 - crate_pos[0]),
+                int(self.player.position.y - self.player.sprite.get_height() / 2 - crate_pos[1])
+            )
+            result = self.crate_mask.overlap(player_mask, offset)
+            if result:
+                print('Crate Collected')
+                self.crates.remove(crate_pos)
+                break
+
 
     def _render(self):
         """Construir cena"""
