@@ -48,7 +48,7 @@ class Camera:
     _ZOOM_MIN = 0.3
     _ZOOM_MAX = 2.0
 
-    def __init__(self, pos: (list, tuple), zoom=1.0, speed=150):
+    def __init__(self, pos: (list, tuple), size, zoom=1.0, speed=150):
         """
         Descrição
         ---------
@@ -66,7 +66,8 @@ class Camera:
 
         self._position = pg.Vector2(pos)
         self._zoom     = zoom
-        self._speed   = speed
+        self._speed    = speed
+        self.width, self.height = size
 
     @property
     def position(self):
