@@ -24,19 +24,20 @@ class App:
 
         Renderer.init()
 
-        SpriteManager.load('ship', 'assets/ship-stage-2.png')
+        SpriteManager.load('ship', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
         SpriteManager.load('menu', 'assets/menu-mortar.png')
         SpriteManager.resize('ship', (204, 20))
         SpriteManager.rescale('menu', 0.9)
 
-        self.npcs   = [
-            Ship((randint(0, 1600), randint(0, 1200)), sprite=SpriteManager.get('ship'), angle=randint(0, 360))
-            for _ in range(10)
-        ]
+        # self.npcs   = [
+        #     Ship((randint(0, 1600), randint(0, 1200)), sprite=SpriteManager.get('ship'), angle=randint(0, 360))
+        #     for _ in range(10)
+        # ]
+        self.npcs   = []
         self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
 
-        self.player = Ship((400, 300), sprite=SpriteManager.get('ship'), angle=135, speed=150)
+        self.player = Ship((400, 300), sprite=SpriteManager.get('ship'), stage=2, gun_type='1x3', guns=4)
         self.camera = Camera((400, 300))
 
     def _update(self, dt, event):
@@ -56,8 +57,8 @@ class App:
         if kbd[pg.K_d]:
             self.player.rotate(dt, True)
 
-        self.player.move(dt)
-        self.camera.follow(self.player, dt)
+        self.player.update(dt, event)
+        self.camera.center(self.player)
 
     def _render(self):
         """Construir cena"""
