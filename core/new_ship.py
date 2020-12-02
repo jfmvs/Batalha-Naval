@@ -201,6 +201,17 @@ class Ship:
     def position(self):
         return self._position
 
+    def rotate(self):
+        if self.turning == -1:
+            self._angle -= round(self.turning_rate / fps, 2)
+        elif self.turning == 1:
+            self._angle += round(self.turning_rate / fps, 2)
+
+        self.turning = 0
+        self._angle = self._angle % 360
+
+        self.image = pg.transform.rotate(self.image, self._angle)
+
     def update(self, fps, events):
         self.image = self.original_image.copy()
 
@@ -220,15 +231,7 @@ class Ship:
         elif self.speed > self.speed_target_list[self.speed_target]:
             self.speed = max(self.speed_target_list[self.speed_target], self.speed - self.acceleration)
 
-        if self.turning == -1:
-            self._angle -= round(self.turning_rate / fps, 2)
-        elif self.turning == 1:
-            self._angle += round(self.turning_rate / fps, 2)
-
-        self.turning = 0
-        self._angle = self._angle % 360
-
-        self.image = pg.transform.rotate(self.image, self._angle)
+        self.rotate()
 
         self._position = [round(self._position[0] - (math.cos(rad(self._angle)) * self.speed / fps), 2),
                          round(self._position[1] + (math.sin(rad(self._angle)) * self.speed / fps), 2)]
@@ -291,15 +294,7 @@ class Player(Ship):
         elif self.speed > self.speed_target_list[self.speed_target]:
             self.speed = max(self.speed_target_list[self.speed_target], self.speed - self.acceleration)
 
-        if self.turning == -1:
-            self._angle -= round(self.turning_rate / fps, 2)
-        elif self.turning == 1:
-            self._angle += round(self.turning_rate / fps, 2)
-
-        self.turning = 0
-        self._angle = self._angle % 360
-
-        self.image = pg.transform.rotate(self.image, self._angle)
+        self.rotate()
 
         self._position = [round(self._position[0] - (math.cos(rad(self._angle)) * self.speed / fps), 2),
                          round(self._position[1] + (math.sin(rad(self._angle)) * self.speed / fps), 2)]
