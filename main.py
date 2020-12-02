@@ -27,8 +27,10 @@ class App:
         SpriteManager.load('basic', 'assets/basic-ship.png')
         SpriteManager.load('player', 'assets/ship-stage-2.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
-        SpriteManager.rescale('basic', (120, 20))
-        SpriteManager.rescale('player', (204, 20))
+        SpriteManager.load('menu', 'assets/menu-mortar.png')
+        SpriteManager.resize('basic', (120, 20))
+        SpriteManager.resize('player', (204, 20))
+        SpriteManager.rescale('menu', 0.9)
 
         self.npcs   = [
             Ship((randint(0, 1600), randint(0, 1200)), sprite=SpriteManager.get('basic'), angle=randint(0, 360))
@@ -69,18 +71,20 @@ class App:
 
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
 
+        Renderer.render_sprite(self._SCREEN, SpriteManager.get('menu'), (0, 0))
+
     def _render_debug_data(self):
         """Dados para depuração"""
 
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 5), msg='camera pos:      x: {:.2f},     y: {:.2f}'.format(
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 5), msg='camera pos:      x: {:.2f},     y: {:.2f}'.format(
             self.camera.position[0], self.camera.position[1]
         ))
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 20), msg=f'scale: {self.camera.zoom:.2f}')
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 60), msg='player pos:     x: {:.2f},   y: {:.2f}'.format(
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 20), msg=f'scale: {self.camera.zoom:.2f}')
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 60), msg='player pos:     x: {:.2f},   y: {:.2f}'.format(
             *self.player.position
         ))
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 80), msg=f'player angle: {self.player.angle:.2f}')
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 100), msg=f'fps: {self._current_fps:}')
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 80), msg=f'player angle: {self.player.angle:.2f}')
+        Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 100), msg=f'fps: {self._current_fps:}')
 
     def run(self):
         """Iniciar jogo"""
