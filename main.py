@@ -24,21 +24,19 @@ class App:
 
         Renderer.init()
 
-        SpriteManager.load('basic', 'assets/basic-ship.png')
-        SpriteManager.load('player', 'assets/ship-stage-2.png')
+        SpriteManager.load('ship', 'assets/ship-stage-2.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
         SpriteManager.load('menu', 'assets/menu-mortar.png')
-        SpriteManager.resize('basic', (120, 20))
-        SpriteManager.resize('player', (204, 20))
+        SpriteManager.resize('ship', (204, 20))
         SpriteManager.rescale('menu', 0.9)
 
         self.npcs   = [
-            Ship((randint(0, 1600), randint(0, 1200)), sprite=SpriteManager.get('basic'), angle=randint(0, 360))
+            Ship((randint(0, 1600), randint(0, 1200)), sprite=SpriteManager.get('ship'), angle=randint(0, 360))
             for _ in range(10)
         ]
         self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
 
-        self.player = Ship((400, 300), sprite=SpriteManager.get('player'), angle=135, speed=150)
+        self.player = Ship((400, 300), sprite=SpriteManager.get('ship'), angle=135, speed=150)
         self.camera = Camera((400, 300))
 
     def _update(self, dt, event):
