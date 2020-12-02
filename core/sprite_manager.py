@@ -21,7 +21,9 @@ class SpriteManager:
         usando a chave `key`
     get(key):
         retorna a sprite com chave `key`
-    rescale(key, size):
+    resize(key, size):
+        muda o tamanho da sprite com chave `key`
+    rescale(key, scale):
         reescala a sprite com chave `key`
     """
 
@@ -74,11 +76,11 @@ class SpriteManager:
         return SpriteManager._sprites[key]
 
     @staticmethod
-    def rescale(key, size):
+    def resize(key, size):
         """
         Descrição
         ---------
-        Reescala a imagem de chave `key` para o tamanho `size`
+        Muda o tamanho da imagem de chave `key` para o tamanho `size`
 
         Parâmetros
         ----------
@@ -92,3 +94,25 @@ class SpriteManager:
         None
         """
         SpriteManager._sprites[key] = pg.transform.scale(SpriteManager._sprites[key], size)
+
+    @staticmethod
+    def rescale(key, scale):
+        """
+        Descrição
+        ---------
+        Reescale a sprite de chave `key` de acordo com `scale`
+
+        Parâmetros
+        ----------
+        key : str
+            chave sob a qual a sprite foi armazenada
+        scale : float
+            fator pelo qual o tamanho original da imagem de chave `key`
+            é multiplicado para determinar seu novo tamanho
+
+        Retorno
+        -------
+        None
+        """
+        img = SpriteManager.get(key)
+        SpriteManager.resize(key, (int(img.get_width() * scale), int(img.get_height() * scale)))
