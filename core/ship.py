@@ -76,23 +76,11 @@ class Ship:
         if self.speed_target > 0:
             self.speed_target -= 1
 
-    def update(self, dt, event):
-        if event.type == pg.KEYDOWN:
-
-            if event.key == pg.K_w:
-                self.increase_speed()
-            elif event.key == pg.K_s:
-                self.decrease_speed()
-
-            elif event.key == pg.K_a:
-                self.rotate(dt, True)
-            elif event.key == pg.K_d:
-                self.rotate(dt)
-
-        self.change_speed()
-        self.move(dt)
-
+    def update_sprite(self, dt):
         self._render_sprite = pg.transform.rotate(self._original_sprite, self._angle)
-        target = pg.mouse.get_pos()
+        target = (0, 0)
         for gun in self.guns:
             self._render_sprite = gun.ready_aim(self._render_sprite, target, dt)
+
+    def update(self, dt, event):
+        self.update_sprite(dt)
