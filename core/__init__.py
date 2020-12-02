@@ -7,16 +7,18 @@ Descrição
 Classes
 -------
     Camera
-        define a região visível do mundo, que será renderizada na tela.
-    Player
-        define o objeto a ser controlado pelo jogador e encapsula sua
-        lógica de movimentação e renderização.
-    Text
-        contém métodos estáticos que facilitam a renderização de texto
-        em objetos pygame.Surface.
-
+        define como objetos de jogo serão renderizados
+    Ship
+        define objetos que representam navios
+    SpriteManager
+        lida com o carregamento e armazenamento de sprites para que
+        possam ser reutilizados por múltiplos objetos
+    Renderer
+        contém a lógica de renderização dos objetos do jogo
 """
 
 from .camera import *
 from .ship import *
-from .text   import *
+from .sprite_manager import *
+from .renderer import *
+from .player import *

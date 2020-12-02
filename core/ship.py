@@ -1,71 +1,45 @@
 import sys
 import pygame as pg
-from pygame import gfxdraw
+from .battery import Battery
 
 
 class Ship:
-    """
-    Descrição
-    ------
-    A classe encapsula a lógica do movimento e renderização dos navios.
 
-    Atributos
-    ---------
-    _position : pygame.Vector2
-        posição central do navio
-    _speed : int
-        taxa de mudança de posição em pixel/s
-    _angle : float
-        ângulo da direção do navio com o eixo x
-    _sprite : pygame.Surface
-        objeto para renderizar a imagem que representa o navio
+    SHIP_STATS = {
 
-    Propriedades
-    ------------
-    direction : pygame.Vector2
-        retorna a direção do movimento do navio
-    angle : float
-        retorna o valor de `_angle`
-    position : pygame.Vector2
-        retorna o valor de `_position`
-    center : pygame.Vector2
-        retorna as coordenadas do centro do navio
+        2: {
+            "Turning Rate": 24,
+            "Top Speed": "%.2f" % 40,
+            "Speed Targets": [0, 30, 60, 90, 120],
+            "Acceleration": 1.5
+        }
+    }
 
-    Métodos
-    -------
-    update(dt):
-        muda a posição do navio
-    rotate(angle):
-        muda o ângulo do navio
-    draw(surface):
-        renderiza o navio no objecto pygame.Surface especificado
-    """
+    def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, sprite: pg.Surface, **kwargs):
 
-    def __init__(self, pos: (list, tuple, pg.Vector2), speed: int = 250, angle: float = 0):
-        """
-        Descrição
-        ---------
-        Inicializa uma instância de Ship
+        self._position         = pg.Vector2(*pos)
+        self._original_sprite  = sprite
+        self._angle            = kwargs.get('angle', 0)
+        self._render_sprite    = pg.transform.rotate(self._original_sprite, self._angle)
 
-        Parâmetros
-        ----------
-        pos : list, tuple, pygame.Vector2
-            posição central do navio
-        speed : int, opcional
-            taxa de mudança de posição do navio em pixel/s
-            (default 250)
-        angle : float, opcional
-            ângulo do navio com o eixo x (default 0)
-        """
-        self._position = pg.Vector2(*pos)
-        self._speed    = speed
-        self._angle    = angle
-        self._sprite   = pg.image.load('assets/player.png').convert_alpha()
-        self._sprite   = pg.transform.scale(self._sprite, (120, 20))
+
+        self.stage = stage
+        self.stats = Ship.SHIP_STATS[self.stage]
+
+        self._angular_speed = self.stats["Turning Rate"]
+
+        self.speed = 0
+        self.speed_target = 0
+        self.speed_target_list = self.stats["Speed Targets"]
+        self.acceleration = self.stats["Acceleration"]
+
+        self.guns = [Battery(self, i, gun_type) for i in range(guns)]
+
+        self.camera = kwargs.get('camera')
 
     @property
     def direction(self):
-        direction = pg.Vector2(-1.0, 0.0)
+        direction = pg.Vector2(1.0, 0.0)
         direction.rotate_ip(self._angle)
         return direction
 
@@ -78,71 +52,37 @@ class Ship:
         return self._position
 
     @property
-    def center(self):
-        return self._position.x, self._position.y
-
-    @property
     def sprite(self):
-        return self._sprite
+        return self._render_sprite
 
-    def update(self, dt: float):
-        """
-        Descrição
-        ------
-        Altera a posição do navio
+    def move(self, dt: float):
+        self._position.x += self.direction.x * self.speed * dt
+        self._position.y -= self.direction.y * self.speed * dt
 
-        Parâmetros
-        ----------
-        dt : float
-            variação de tempo
+    def rotate(self, dt: float, reverse: bool = False):
+        mod = -1 if reverse else 1
+        self._angle += self._angular_speed * mod * dt
+        self._angle %= 360
 
-        Retorno
-        -------
-        None
-        """
-        self._position += self.direction * self._speed * dt
+    def change_speed(self):
+        if self.speed < self.speed_target_list[self.speed_target]:
+            self.speed = min(self.speed_target_list[self.speed_target], self.speed + self.acceleration)
+        elif self.speed > self.speed_target_list[self.speed_target]:
+            self.speed = max(self.speed_target_list[self.speed_target], self.speed - self.acceleration)
 
-    def rotate(self, angle: float):
-        """
-        Descrição
-        ---------
-        Altera o ângulo do navio com o eixo x
+    def increase_speed(self):
+        if self.speed_target < 4:
+            self.speed_target += 1
 
-        Parâmetros
-        ----------
-        angle : float
-            variação do ângulo do navio
+    def decrease_speed(self):
+        if self.speed_target > 0:
+            self.speed_target -= 1
 
-        Retorno
-        -------
-        None
-        """
-        self._angle += angle
-        self._angle = self._angle % 360
+    def update_sprite(self, dt):
+        self._render_sprite = pg.transform.rotate(self._original_sprite, self._angle)
+        target = (0, 0)
+        for gun in self.guns:
+            self._render_sprite = gun.ready_aim(self._render_sprite, target, dt)
 
-    def draw(self, surface: pg.Surface):
-        """
-        Descrição
-        ---------
-        Renderiza `_sprite` na superfície dada como parâmetro. No modo
-        debug, também renderiza uma linha representante da direção.
-
-        Parâmetros
-        ----------
-        surface : pygame.Surface
-            superfície onde o navio deve ser renderizado
-
-        Retorno
-        -------
-        None
-        """
-        modeled = pg.transform.rotate(self._sprite, -self._angle)
-        coords = (self._position.x - modeled.get_width() // 2, self._position.y - modeled.get_height() // 2)
-        surface.blit(modeled, coords)
-
-        if '-o' not in sys.argv:
-            length = 40
-            coord1 = self._position.x, self._position.y
-            coord2 = int(coord1[0] + self.direction.x * length), int(coord1[1] + self.direction.y * length)
-            coord1 = int(coord1[0]), int(coord1[1])
-            pg.gfxdraw.line(surface, *coord1, *coord2, (223, 32, 203))
+    def update(self, dt, event):
+        self.update_sprite(dt)

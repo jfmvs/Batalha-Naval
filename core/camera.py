@@ -19,6 +19,8 @@ class Camera:
         a posição central da câmera
     _zoom : float
         escala de um objeto renderizável
+    _speed : float
+        deslocamento da câmera em pixel/s
 
     Propriedades
     ------------
@@ -41,15 +43,12 @@ class Camera:
         aumento o valor de `_zoom`
     zoom_out():
         diminui o valor de `_zoom`
-    get_modeled(renderable):
-        retorna uma superfície com as alterações necessárias para renderizar
-        `renderable`
     """
 
     _ZOOM_MIN = 0.3
     _ZOOM_MAX = 2.0
 
-    def __init__(self, pos: (list, tuple), zoom=1.0):
+    def __init__(self, pos: (list, tuple), size, zoom=1.0, speed=150):
         """
         Descrição
         ---------
@@ -61,10 +60,14 @@ class Camera:
             posição central da câmera no mundo
         zoom : float, opcional
             a escala dos objetos renderizáveis (default  1.0)
+        speed : float, opcional
+            deslocamento da câmera em pixels por segundo (default 150)
         """
 
         self._position = pg.Vector2(pos)
         self._zoom     = zoom
+        self._speed    = speed
+        self.width, self.height = size
 
     @property
     def position(self):
@@ -112,26 +115,5 @@ class Camera:
         """
         self.zoom -= 0.01
 
-    def get_modeled(self, renderable):
-        """
-        Descrição
-        ---------
-        Retorna um objeto pygame.Surface que representa como `renderable` deve
-        ser renderizado na tela
-
-        Parâmetro
-        ---------
-        renderable : any
-            um objeto a ser renderizado
-
-        Retorno
-        -------
-        pygame.Surface
-        """
-        if isinstance(renderable, Ship):
-            modeled = pg.transform.scale(renderable.sprite, (
-                int(renderable.sprite.get_width()  * self.zoom),
-                int(renderable.sprite.get_height() * self.zoom)
-            ))
-            modeled = pg.transform.rotate(modeled, renderable.angle)
-            return modeled
+    def center(self, target: Ship):
+        self._position = target.position
