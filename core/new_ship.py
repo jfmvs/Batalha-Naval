@@ -161,7 +161,7 @@ class Battery:
 
 class Ship:
 
-    def __init__(self, player, position, stage, gun_type, guns):
+    def __init__(self, position, stage, gun_type, guns):
         ship_stats = {
 
             2: {
@@ -171,8 +171,6 @@ class Ship:
                 "Acceleration": 1.5
             }
         }
-
-        self.player = player
 
         self._position = position
         self._angle = 0
@@ -206,43 +204,81 @@ class Ship:
     def update(self, fps, events):
         self.image = self.original_image.copy()
 
-        if self.player:
+        """
+        
+        Lógica da IA a ser definida por Lais
+        
+        """
 
-            for event in events:
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_w:
-                        self.increase_speed = True
-                        self.speed_target += 1
+        if self.speed_target > 4:
+            self.speed_target = 4
+        elif self.speed_target < 0:
+            self.speed_target = 0
 
-                    elif event.key == pg.K_s:
-                        self.decrease_speed = True
-                        self.speed_target -= 1
+        if self.speed < self.speed_target_list[self.speed_target]:
+            self.speed = min(self.speed_target_list[self.speed_target], self.speed + self.acceleration)
+        elif self.speed > self.speed_target_list[self.speed_target]:
+            self.speed = max(self.speed_target_list[self.speed_target], self.speed - self.acceleration)
 
-                    elif event.key == pg.K_a:
-                        self.turning_left = True
+        if self.turning == -1:
+            self._angle -= round(self.turning_rate / fps, 2)
+        elif self.turning == 1:
+            self._angle += round(self.turning_rate / fps, 2)
 
-                    elif event.key == pg.K_d:
-                        self.turning_right = True
+        self.turning = 0
+        self._angle = self._angle % 360
 
-                elif event.type == pg.KEYUP:
-                    if event.key == pg.K_w:
-                        self.increase_speed = False
+        self.image = pg.transform.rotate(self.image, self._angle)
 
-                    elif event.key == pg.K_s:
-                        self.decrease_speed = False
-
-                    elif event.key == pg.K_a:
-                        self.turning_left = False
-
-                    elif event.key == pg.K_d:
-                        self.turning_right = False
-
-            self.turning = self.turning_left - self.turning_right
+        self._position = [round(self._position[0] - (math.cos(rad(self._angle)) * self.speed / fps), 2),
+                         round(self._position[1] + (math.sin(rad(self._angle)) * self.speed / fps), 2)]
 
 
-        else:
-            pass
-            # Lais vai aqui
+        # target definido por IA
+        target = (0,0)
+
+        for gun in self.guns:
+            self.image = gun.ready_aim(self.image, target, fps)
+
+
+class Player(Ship):
+
+    def __init__(self, position, stage, gun_type, guns):
+        super().__init__(position, stage, gun_type, guns)
+
+    def update(self, fps, events):
+        self.image = self.original_image.copy()
+
+        for event in events:
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_w:
+                    self.increase_speed = True
+                    self.speed_target += 1
+
+                elif event.key == pg.K_s:
+                    self.decrease_speed = True
+                    self.speed_target -= 1
+
+                elif event.key == pg.K_a:
+                    self.turning_left = True
+
+                elif event.key == pg.K_d:
+                    self.turning_right = True
+
+            elif event.type == pg.KEYUP:
+                if event.key == pg.K_w:
+                    self.increase_speed = False
+
+                elif event.key == pg.K_s:
+                    self.decrease_speed = False
+
+                elif event.key == pg.K_a:
+                    self.turning_left = False
+
+                elif event.key == pg.K_d:
+                    self.turning_right = False
+
+        self.turning = self.turning_left - self.turning_right
 
 
         if self.speed_target > 4:
@@ -268,17 +304,14 @@ class Ship:
         self._position = [round(self._position[0] - (math.cos(rad(self._angle)) * self.speed / fps), 2),
                          round(self._position[1] + (math.sin(rad(self._angle)) * self.speed / fps), 2)]
 
-        if self.player:
-            target = pg.mouse.get_pos()
-        else:
-            pass
+        target = pg.mouse.get_pos()
 
         for gun in self.guns:
             self.image = gun.ready_aim(self.image, target, fps)
 
 
 running = True
-ship = Ship(True, [200, 300], 2, "1x3", 4)
+ship = Player([200, 300], 2, "1x3", 4)
 while running:
     dt = pg.time.Clock().tick(60) / 1000
     fps = int(1 / dt)
