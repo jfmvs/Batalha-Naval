@@ -202,6 +202,8 @@ class Ship:
         return self._position
 
     def rotate(self):
+        self.turning = self.turning_left - self.turning_right
+
         if self.turning == -1:
             self._angle -= round(self.turning_rate / fps, 2)
         elif self.turning == 1:
@@ -280,9 +282,6 @@ class Player(Ship):
 
                 elif event.key == pg.K_d:
                     self.turning_right = False
-
-        self.turning = self.turning_left - self.turning_right
-
 
         if self.speed_target > 4:
             self.speed_target = 4
