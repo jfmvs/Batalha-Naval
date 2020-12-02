@@ -285,8 +285,11 @@ while running:
 
     events = list(pg.event.get())
     for event in events:
-        if event.type == pg.quit:
+        if event.type == pg.QUIT:
             running = False
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                running = False
     screen.fill((100, 100, 255))
     ship.update(fps, events)
     screen.blit(ship.image, [int(ship.position[0]), int(ship.position[1])])
