@@ -94,9 +94,8 @@ class Renderer:
         -------
         None
         """
-        rotated = pg.transform.rotate(ship.sprite, ship.angle)
         pos     = (ship.position.x, ship.position.y)
-        Renderer.render_sprite(surface, rotated, pos, centered=True, camera=camera)
+        Renderer.render_sprite(surface, ship.sprite, pos, centered=True, camera=camera)
 
     @staticmethod
     def render_sprite(surface: pg.Surface, sprite: pg.Surface, pos: (list, tuple),

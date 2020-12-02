@@ -60,11 +60,12 @@ class Ship:
         angle : float, opcional
             ângulo do navio com o eixo x (default 0)
         """
-        self._position      = pg.Vector2(*pos)
-        self._sprite        = sprite
-        self._speed         = kwargs.get('speed', 250)
-        self._angle         = kwargs.get('angle', 0)
-        self._angular_speed = kwargs.get('angular_speed', 150)
+        self._position         = pg.Vector2(*pos)
+        self._original_sprite  = sprite
+        self._speed            = kwargs.get('speed', 250)
+        self._angle            = kwargs.get('angle', 0)
+        self._angular_speed    = kwargs.get('angular_speed', 150)
+        self._render_sprite    = pg.transform.rotate(self._original_sprite, self._angle)
 
     @property
     def direction(self):
@@ -90,7 +91,7 @@ class Ship:
 
     @property
     def sprite(self):
-        return self._sprite
+        return self._render_sprite
 
     def move(self, dt: float):
         """
@@ -128,4 +129,6 @@ class Ship:
         mod = -1 if reverse else 1
         self._angle += self._angular_speed * mod * dt
         self._angle %= 360
+
+        self._render_sprite = pg.transform.rotate(self._original_sprite, self._angle)
 
