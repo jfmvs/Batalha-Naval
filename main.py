@@ -30,14 +30,14 @@ class App:
         SpriteManager.resize('ship', (204, 20))
         SpriteManager.rescale('menu', 0.9)
 
-        # self.npcs   = [
-        #     Ship((randint(0, 1600), randint(0, 1200)), sprite=SpriteManager.get('ship'), angle=randint(0, 360))
-        #     for _ in range(10)
-        # ]
-        self.npcs   = []
+        self.npcs   = [
+            Ship((randint(0, 1600), randint(0, 1200)), angle=randint(0, 360),
+                 sprite=SpriteManager.get('ship'), gun_type='1x3', stage=2, guns=4)
+            for _ in range(10)
+        ]
         self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
 
-        self.player = Ship((400, 300), sprite=SpriteManager.get('ship'), stage=2, gun_type='1x3', guns=4)
+        self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2, gun_type='1x3', guns=4)
         self.camera = Camera((400, 300))
 
         self.crate_mask = pg.mask.from_surface(SpriteManager.get('crate'))
@@ -63,6 +63,18 @@ class App:
         self.camera.center(self.player)
 
         player_mask = pg.mask.from_surface(self.player.sprite)
+
+        for npc in self.npcs:
+            npc.update(dt, event)
+            npc_mask = pg.mask.from_surface(npc.sprite)
+            offset = (
+                int(self.player.position.x - self.player.sprite.get_width()  / 2 - npc.position.x + npc.sprite.get_width()  / 2),
+                int(self.player.position.y - self.player.sprite.get_height() / 2 - npc.position.y + npc.sprite.get_height() / 2)
+            )
+            result = npc_mask.overlap(player_mask, offset)
+            if result:
+                print('Ship collision detected')
+
         for crate_pos in self.crates:
             offset = (
                 int(self.player.position.x - self.player.sprite.get_width()  / 2 - crate_pos[0]),
