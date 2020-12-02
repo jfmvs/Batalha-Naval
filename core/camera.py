@@ -43,8 +43,6 @@ class Camera:
         aumento o valor de `_zoom`
     zoom_out():
         diminui o valor de `_zoom`
-    follow(target, dt):
-        faz a câmera se deslocar em direção a `target`
     """
 
     _ZOOM_MIN = 0.3
@@ -116,26 +114,5 @@ class Camera:
         """
         self.zoom -= 0.01
 
-    def follow(self, target: Ship, dt: float):
-        """
-        Descrição
-        ---------
-        Desloca a câmera em direção a um navio numa quantidade de
-        pixels determina pela sua velocidade e pelo intervalo de tempo
-        `dt`
-
-        Parâmetros
-        ----------
-        target : Ship
-            alvo a ser seguido pela câmera
-        dt : float
-            intervalo de tempo entre frames
-
-        Retorno
-        -------
-        None
-        """
-        direction = target.position - self.position
-        if direction.length_squared() != 0:
-            direction.normalize_ip()
-        self.position += direction * self._speed * dt
+    def center(self, target: Ship):
+        self._position = target.position
