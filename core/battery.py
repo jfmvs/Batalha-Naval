@@ -41,7 +41,8 @@ class Battery:
         # centraliza a posição do navio
         render_position = gun_position + [ship_width / 2, ship_height / 2]
 
-        gun_position += self.ship.position
+        offset = self.ship.camera.position - [self.ship.camera.width / 2, self.ship.camera.height / 2]
+        gun_position += self.ship.position - offset
 
         vertical_aim   = (gun_position[1] - target[1])
         horizontal_aim = (target[0] - gun_position[0])
