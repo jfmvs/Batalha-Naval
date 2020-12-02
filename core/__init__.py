@@ -21,3 +21,4 @@ from .camera import *
 from .ship import *
 from .sprite_manager import *
 from .renderer import *
+from .player import *
