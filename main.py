@@ -30,15 +30,16 @@ class App:
         SpriteManager.resize('ship', (204, 20))
         SpriteManager.rescale('menu', 0.9)
 
+        self.camera = Camera((400, 300), self._SCREEN.get_size())
         self.npcs   = [
             Ship((randint(0, 1600), randint(0, 1200)), angle=randint(0, 360),
-                 sprite=SpriteManager.get('ship'), gun_type='1x3', stage=2, guns=4)
+                 sprite=SpriteManager.get('ship'), gun_type='1x3', stage=2, guns=4, camera=self.camera)
             for _ in range(10)
         ]
         self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
 
-        self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2, gun_type='1x3', guns=4)
-        self.camera = Camera((400, 300))
+        self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2,
+                             gun_type='1x3', guns=4, camera=self.camera)
 
         self.crate_mask = pg.mask.from_surface(SpriteManager.get('crate'))
 

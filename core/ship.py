@@ -35,6 +35,8 @@ class Ship:
 
         self.guns = [Battery(self, i, gun_type) for i in range(guns)]
 
+        self.camera = kwargs.get('camera')
+
     @property
     def direction(self):
         direction = pg.Vector2(1.0, 0.0)
