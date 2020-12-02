@@ -210,18 +210,18 @@ class Ship:
 
             for event in events:
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_w and not self.increase_speed:
+                    if event.key == pg.K_w:
                         self.increase_speed = True
                         self.speed_target += 1
 
-                    elif event.key == pg.K_s and not self.decrease_speed:
+                    elif event.key == pg.K_s:
                         self.decrease_speed = True
                         self.speed_target -= 1
 
-                    elif event.key == pg.K_a and not self.turning_left:
+                    elif event.key == pg.K_a:
                         self.turning_left = True
 
-                    elif event.key == pg.K_d and not self.turning_right:
+                    elif event.key == pg.K_d:
                         self.turning_right = True
 
                 elif event.type == pg.KEYUP:
