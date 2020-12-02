@@ -16,7 +16,7 @@ running = True
 
 # Screen setting
 pg.display.gl_set_attribute(pg.GL_MULTISAMPLEBUFFERS, 0)
-screen = pg.display.set_mode((1500, 1000))
+screen = pg.display.set_mode((800, 600))
 
 # Font
 font = pg.font.SysFont('century', 18)
