@@ -80,7 +80,7 @@ class Ship:
 
     def shoot_guns(self, dt):
         for gun in self.guns:
-            gun.fire(dt)
+            gun.fire()
 
     def update_sprite(self, dt):
         self._render_sprite = pg.transform.rotate(self._original_sprite, self._angle)
@@ -90,4 +90,3 @@ class Ship:
 
     def update(self, dt, event):
         self.update_sprite(dt)
-        self.shoot_guns(dt)
