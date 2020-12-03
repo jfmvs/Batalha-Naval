@@ -22,3 +22,4 @@ from .ship import *
 from .sprite_manager import *
 from .renderer import *
 from .player import *
+from .bullet_manager import BulletManager
