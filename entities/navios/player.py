@@ -41,6 +41,9 @@ class Player(Ship):
                 for gun in self.guns:
                     gun.fire()
 
+        for gun in self.guns:
+            gun.reload = max([0, gun.reload - dt])
+
         self.change_speed()
         self.move(dt)
         self.update_sprite(dt)
