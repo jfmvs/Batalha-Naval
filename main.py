@@ -2,6 +2,7 @@ import sys
 from random import randint
 import pygame as pg
 from core import *
+from entities import *
 
 
 class App:

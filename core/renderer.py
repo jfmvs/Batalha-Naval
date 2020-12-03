@@ -1,6 +1,6 @@
 import pygame as pg
-from .ship import Ship
-from .camera import Camera
+from entities.ship import Ship
+from entities.camera import Camera
 
 
 class Renderer:

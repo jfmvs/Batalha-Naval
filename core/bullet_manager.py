@@ -1,5 +1,5 @@
 import pygame as pg
-from .bullet import Bullet
+from entities.bullet import Bullet
 
 class BulletManager:
 

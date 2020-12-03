@@ -1,6 +1,6 @@
 import math
 import pygame as pg
-from .bullet_manager import BulletManager
+from core.bullet_manager import BulletManager
 
 class Battery:
 
