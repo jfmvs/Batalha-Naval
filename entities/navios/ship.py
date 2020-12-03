@@ -1,8 +1,18 @@
 import pygame as pg
 from entities import Battery
 
-
 class Ship:
+
+    nivelTotal = 0
+    xp = 0
+    xpNecessaria = 100
+    calibre = int(0)
+    power = int(0)
+    guns = int(0)
+    health = int(0)
+    maximo = False
+    vidaTotal = 100 + 10 * health
+    vidaAtual = 100
 
     SHIP_STATS = {
 
