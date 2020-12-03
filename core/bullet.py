@@ -5,8 +5,8 @@ import math
 class Bullet(object):
 
     BULLET_DATA = {
-        # velocidade / tempo de vida
-        3: [120, 5]
+        # tempo de vida / velocidade
+        3: [5, 120]
 
     }
 
