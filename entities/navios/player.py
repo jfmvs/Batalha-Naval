@@ -6,6 +6,17 @@ class Player(Ship):
     def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, sprite: pg.Surface, **kwargs):
         super().__init__(pos, stage, gun_type, guns, sprite, **kwargs)
 
+        self.nivelTotal = 0
+        self.xp = 0
+        self.xpNecessaria = 100
+        self.calibre = int(0)
+        self.power = int(0)
+        self.gun_count = int(0)
+        self.health = int(0)
+        self.maximo = False
+        self.vidaTotal = 100 + 10 * self.health
+        self.vidaAtual = 100
+
     def update_sprite(self, dt):
         self._render_sprite = pg.transform.rotate(self._original_sprite, self._angle)
         target = pg.mouse.get_pos()
