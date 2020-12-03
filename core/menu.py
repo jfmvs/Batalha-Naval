@@ -81,3 +81,4 @@ class Menu:
 
         Renderer.render_text(surface, f'{self.player.vidaAtual}/{self.player.vidaTotal}',
                              (178, 11), font='Calibri', size=18, color=(0, 0, 0))
+
