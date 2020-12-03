@@ -74,7 +74,7 @@ class Menu:
                     Renderer.render_text(surface, '[Press I]', (410, 102), font='Calibri', size=16, color=(0, 0, 0))
                 if type(self.player.health) == int:
                     Renderer.render_text(surface, '[Press O]', (525,  52), font='Calibri', size=16, color=(0, 0, 0))
-                if type(self.player.guns) == int:
+                if type(self.player.gun_count) == int:
                     Renderer.render_text(surface, '[Press P]', (536, 100), font='Calibri', size=16, color=(0, 0, 0))
         else:
             Renderer.render_text(surface, 'MAXIMO ATINGIDO', (180, 60), font='Calibri', size=16, color=(0, 0, 0))

@@ -28,6 +28,7 @@ class App:
         SpriteManager.load('ship', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
         SpriteManager.load('cannon-ball', 'assets/cannonball.png')
+        SpriteManager.load('bullet', 'assets/Bullet_3.png')
         SpriteManager.rescale('cannon-ball', 0.5)
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
@@ -83,10 +84,10 @@ class App:
                     self.player.health += 1
         if kbd[pg.K_p]:
             if self.player.xp >= self.player.xpNecessaria:
-                if type(self.player.guns) == int:
+                if type(self.player.gun_count) == int:
                     self.player.nivelTotal += 1
                     self.player.xp -= self.player.xpNecessaria
-                    self.player.guns += 1
+                    self.player.gun_count += 1
         if kbd[pg.K_m]:
             if self.player.vidaAtual > 10:
                 self.player.vidaAtual -= 10
@@ -110,7 +111,7 @@ class App:
                 print('Player-Ship collision detected')
 
             for bullet in BulletManager._bullets:
-                sprite = SpriteManager.get('cannon-ball')
+                sprite = SpriteManager.get('bullet')
                 bullet_mask = pg.mask.from_surface(sprite)
                 offset = (
                     int(bullet.x - sprite.get_width()  / 2 - npc.position.x + npc.sprite.get_width()  / 2),
@@ -147,7 +148,9 @@ class App:
 
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
         for bullet in BulletManager._bullets:
-            Renderer.render_sprite(self._SCREEN, SpriteManager.get('cannon-ball'), (bullet.x, bullet.y), centered=True)
+            sprite = SpriteManager.get('bullet').copy()
+            sprite = pg.transform.rotate(sprite, bullet.angle)
+            Renderer.render_sprite(self._SCREEN, sprite, (bullet.x, bullet.y), centered=True)
 
         self.menu.render(self._SCREEN)
 
