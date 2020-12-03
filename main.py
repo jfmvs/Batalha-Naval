@@ -27,7 +27,6 @@ class App:
         SpriteManager.load('ship', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
         SpriteManager.load('menu', 'assets/menu-mortar.png')
-        SpriteManager.resize('ship', (204, 20))
         SpriteManager.rescale('menu', 0.9)
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
