@@ -27,7 +27,6 @@ class App:
 
         SpriteManager.load('ship', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
-        SpriteManager.load('menu', 'assets/menu.PNG')
         SpriteManager.load('cannon-ball', 'assets/cannonball.png')
         SpriteManager.rescale('cannon-ball', 0.5)
 
@@ -41,6 +40,7 @@ class App:
         ]
         self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
         self.crate_mask = pg.mask.from_surface(SpriteManager.get('crate'))
+        self.menu = Menu(self.player)
 
     def _update(self, dt, event):
         """Mudanças de estado"""
@@ -58,6 +58,40 @@ class App:
             self.player.rotate(dt)
         if kbd[pg.K_d]:
             self.player.rotate(dt, True)
+        if kbd[pg.K_l]:
+            self.player.xp += 10
+        if kbd[pg.K_k]:
+            self.player.xp -= 10
+        if kbd[pg.K_u]:
+            if self.player.xp >= self.player.xpNecessaria:
+                if type(self.player.power) == int:
+                    self.player.nivelTotal += 1
+                    self.player.xp -= self.player.xpNecessaria
+                    self.player.power += 1
+        if kbd[pg.K_i]:
+            if self.player.xp >= self.player.xpNecessaria:
+                if type(self.player.calibre) == int:
+                    self.player.nivelTotal += 1
+                    self.player.xp -= self.player.xpNecessaria
+                    self.player.calibre += 1
+        if kbd[pg.K_o]:
+            if self.player.xp >= self.player.xpNecessaria:
+                if type(self.player.health) == int:
+                    self.player.nivelTotal += 1
+                    self.player.xp -= self.player.xpNecessaria
+                    self.player.vidaAtual += 20
+                    self.player.health += 1
+        if kbd[pg.K_p]:
+            if self.player.xp >= self.player.xpNecessaria:
+                if type(self.player.guns) == int:
+                    self.player.nivelTotal += 1
+                    self.player.xp -= self.player.xpNecessaria
+                    self.player.guns += 1
+        if kbd[pg.K_m]:
+            if self.player.vidaAtual > 10:
+                self.player.vidaAtual -= 10
+        if kbd[pg.K_n]:
+            self.player.vidaAtual += 10
 
         self.player.update(dt, event)
         self.camera.center(self.player)
@@ -99,6 +133,7 @@ class App:
                 break
 
         BulletManager.update(dt)
+        self.menu.update()
 
 
     def _render(self):
@@ -114,7 +149,8 @@ class App:
         for bullet in BulletManager._bullets:
             Renderer.render_sprite(self._SCREEN, SpriteManager.get('cannon-ball'), (bullet.x, bullet.y), centered=True)
 
-        Renderer.render_sprite(self._SCREEN, SpriteManager.get('menu'), (400, 70), centered=True)
+        self.menu.render(self._SCREEN)
+
 
     def _render_debug_data(self):
         """Dados para depuração"""
