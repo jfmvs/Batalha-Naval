@@ -6,10 +6,15 @@ class Battery:
     MOUNT_DATA = {
         2: [
         # posição inicial a partir do centro / ângulo inicial / limites de ângulos sentidos horário|anti-horário
-            [(85,  0), 0, (210, 150)],
-            [(75,  0), 0, (225, 135)],
-            [(20, -4), 0, (20,  165)],
-            [(20,  4), 0, (195, 340)]]
+            [(45,  0), 0, (210, 150)],
+            [(37,  0), 0, (225, 135)],
+            [(10, -4), 0, (20,  165)],
+            [(10,  4), 0, (195, 340)]]
+    }
+
+    RELOAD_DATA = {
+        # tempo de recarregamento
+        3: 4
     }
 
     def __init__(self, ship, slot, gun_type):
@@ -19,11 +24,14 @@ class Battery:
         self.mount = pg.Vector2(self.mount)
 
         self.number, self.caliber = [int(i) for i in gun_type.split("x")]
+        self.reload_time = Battery.RELOAD_DATA[self.caliber]
         self.reload = 0
+
 
         self.gun_angle = 0
         self.aim_angle = 0
         self.rotation_speed = 30
+        self.aimed = False
 
         self.original_image = pg.image.load(f"assets/{gun_type}_Gun_Small.png")
         self.image = pg.transform.rotate(self.original_image, (self.gun_angle + self.ship.angle) % 360)
@@ -41,7 +49,8 @@ class Battery:
         # centraliza a posição do navio
         render_position = gun_position + [ship_width / 2, ship_height / 2]
 
-        gun_position += self.ship.position
+        offset = self.ship.camera.position - [self.ship.camera.width / 2, self.ship.camera.height / 2]
+        gun_position += self.ship.position - offset
 
         vertical_aim   = (gun_position[1] - target[1])
         horizontal_aim = (target[0] - gun_position[0])
@@ -87,6 +96,12 @@ class Battery:
                     self.gun_angle = self.firing_angle[1]
 
         self.gun_angle %= 360
+
+        if (self.gun_angle - self.aim_angle) % 360 < 1:
+            self.aimed = True
+        else:
+            self.aimed = False
+
         self.image = pg.transform.rotate(self.original_image, (self.gun_angle + self.ship.angle) % 360)
 
         gun_width  = self.image.get_width()
@@ -97,3 +112,11 @@ class Battery:
 
         ship_image.blit(self.image, render_position)
         return ship_image
+
+    def fire(self, dt):
+       if self.aimed and self.reload == 0:
+            # Bullet()
+            self.reload = self.reload_time
+       else:
+           self.reload -= dt
+
