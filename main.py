@@ -79,9 +79,11 @@ class App:
                 sprite = SpriteManager.get('cannon-ball')
                 bullet_mask = pg.mask.from_surface(sprite)
                 offset = (
-                    int(bullet.x - sprite.get_width()  / 2 - npc.position.x + npc.sprite.get_width()  / 2),
-                    int(bullet.y - sprite.get_height() / 2 - npc.position.y + npc.sprite.get_height() / 2)
-                )
+                    int(bullet.x - (sprite.get_width()  / 2) - (npc.position.x - (npc.sprite.get_width()  / 2) -
+                        (self.camera.position[0] - (self._SCREEN_WIDTH / 2)))),
+                    int(bullet.y - (sprite.get_height() / 2) - (npc.position.y - (npc.sprite.get_height() / 2)) +
+                        (self.camera.position[1] - (self._SCREEN_HEIGHT / 2))))
+
                 result = npc_mask.overlap(bullet_mask, offset)
                 if result:
                     print('Ship-Bullet collision detected')
