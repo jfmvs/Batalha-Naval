@@ -37,9 +37,29 @@ class App:
                    gun_type='1x3', guns=4, camera=self.camera, player=self.player)
             for _ in range(3)
         ]
-        self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
-        self.crate_mask = pg.mask.from_surface(SpriteManager.get('crate'))
+        self.crates = self.get_crates()
         self.menu = Menu(self.player)
+
+    def get_crates(self):
+        crates = []
+
+        for _ in range(randint(1, 5)):
+            crates.append(
+                CaliberContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('crate'))
+            )
+        for _ in range(randint(1, 5)):
+            crates.append(
+                HPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('crate'))
+            )
+        for _ in range(randint(1, 5)):
+            crates.append(
+                PowerContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('crate'))
+            )
+        for _ in range(randint(1, 5)):
+            crates.append(
+                XPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('crate'))
+            )
+        return crates
 
     def _update(self, dt, event):
         """Mudanças de estado"""
@@ -121,16 +141,10 @@ class App:
                 if result:
                     print('Ship-Bullet collision detected')
 
-
-        for crate_pos in self.crates:
-            offset = (
-                int(self.player.position.x - self.player.sprite.get_width()  / 2 - crate_pos[0]),
-                int(self.player.position.y - self.player.sprite.get_height() / 2 - crate_pos[1])
-            )
-            result = self.crate_mask.overlap(player_mask, offset)
-            if result:
-                print('Crate Collected')
-                self.crates.remove(crate_pos)
+        for crate in self.crates:
+            crate.overlap()
+            if not crate.active:
+                self.crates.remove(crate)
                 break
 
         BulletManager.update(dt)
@@ -142,9 +156,8 @@ class App:
 
         for npc in self.npcs:
             Renderer.render_ship(self._SCREEN, npc, self.camera)
-        for crate_pos in self.crates:
-            Renderer.render_sprite(self._SCREEN, SpriteManager.get('crate'), crate_pos, self.camera)
-
+        for crate in self.crates:
+            Renderer.render_sprite(self._SCREEN, crate.sprite, crate.position, self.camera)
 
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
 
