@@ -27,17 +27,15 @@ class App:
 
         SpriteManager.load('ship', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
-        SpriteManager.load('cannon-ball', 'assets/cannonball.png')
         SpriteManager.load('bullet', 'assets/Bullet_3.png')
-        SpriteManager.rescale('cannon-ball', 0.5)
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
         self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2,
                              gun_type='1x3', guns=1, camera=self.camera)
         self.npcs   = [
-            Npc((randint(0, 1600), randint(0, 1200)), angle=randint(0, 360), sprite=SpriteManager.get('ship'), stage=2,
+            Npc((randint(0, 800), randint(0, 600)), angle=randint(0, 360), sprite=SpriteManager.get('ship'), stage=2,
                    gun_type='1x3', guns=4, camera=self.camera, player=self.player)
-            for _ in range(10)
+            for _ in range(3)
         ]
         self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
         self.crate_mask = pg.mask.from_surface(SpriteManager.get('crate'))
@@ -114,9 +112,11 @@ class App:
                 sprite = SpriteManager.get('bullet')
                 bullet_mask = pg.mask.from_surface(sprite)
                 offset = (
-                    int(bullet.x - sprite.get_width()  / 2 - npc.position.x + npc.sprite.get_width()  / 2),
-                    int(bullet.y - sprite.get_height() / 2 - npc.position.y + npc.sprite.get_height() / 2)
-                )
+                    int(bullet.x - (sprite.get_width() / 2) - (npc.position.x - (npc.sprite.get_width() / 2) -
+                                                               (self.camera.position[0] - (self._SCREEN_WIDTH / 2)))),
+                    int(bullet.y - (sprite.get_height() / 2) - (npc.position.y - (npc.sprite.get_height() / 2)) +
+                        (self.camera.position[1] - (self._SCREEN_HEIGHT / 2))))
+
                 result = npc_mask.overlap(bullet_mask, offset)
                 if result:
                     print('Ship-Bullet collision detected')
@@ -147,6 +147,7 @@ class App:
 
 
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
+
         for bullet in BulletManager._bullets:
             sprite = SpriteManager.get('bullet').copy()
             sprite = pg.transform.rotate(sprite, bullet.angle)
