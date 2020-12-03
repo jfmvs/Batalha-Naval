@@ -1,6 +1,4 @@
-import sys
 import pygame as pg
-from .battery import Battery
 from .ship import Ship
 
 

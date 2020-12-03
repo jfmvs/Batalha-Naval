@@ -1,8 +1,6 @@
-import sys
 import pygame as pg
-from .battery import Battery
 from .ship import Ship
-import math
+
 
 class Npc(Ship):
     def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, sprite: pg.Surface, player, **kwargs):

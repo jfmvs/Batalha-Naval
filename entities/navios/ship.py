@@ -1,6 +1,5 @@
-import sys
 import pygame as pg
-from .battery import Battery
+from entities import Battery
 
 
 class Ship:
