@@ -118,5 +118,5 @@ class Battery:
         return ship_image
 
     def fire(self):
-        BulletManager.add(self.global_pos, self.gun_angle - self.ship.angle, 3)
+        BulletManager.add(self.global_pos, (self.ship.angle + self.gun_angle) % 360, 3)
         self.reload = self.reload_time
