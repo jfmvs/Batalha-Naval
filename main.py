@@ -27,8 +27,7 @@ class App:
 
         SpriteManager.load('ship', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
-        SpriteManager.load('menu', 'assets/menu-mortar.png')
-        SpriteManager.rescale('menu', 0.9)
+        SpriteManager.load('menu', 'assets/menu.PNG')
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
         self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2,
@@ -100,7 +99,7 @@ class App:
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
         BulletManager.render(self._SCREEN, self.camera)
 
-        Renderer.render_sprite(self._SCREEN, SpriteManager.get('menu'), (0, 0))
+        Renderer.render_sprite(self._SCREEN, SpriteManager.get('menu'), (400, 70), centered=True)
 
     def _render_debug_data(self):
         """Dados para depuração"""
