@@ -6,7 +6,7 @@ class Bullet(object):
 
     BULLET_DATA = {
         # tempo de vida / velocidade
-        3: [5, 120]
+        3: [2, 120]
 
     }
 
