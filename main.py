@@ -28,6 +28,8 @@ class App:
         SpriteManager.load('ship', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
         SpriteManager.load('menu', 'assets/menu.PNG')
+        SpriteManager.load('cannon-ball', 'assets/cannonball.png')
+        SpriteManager.rescale('cannon-ball', 0.5)
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
         self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2,
@@ -71,7 +73,19 @@ class App:
             )
             result = npc_mask.overlap(player_mask, offset)
             if result:
-                print('Ship collision detected')
+                print('Player-Ship collision detected')
+
+            for bullet in BulletManager._bullets:
+                sprite = SpriteManager.get('cannon-ball')
+                bullet_mask = pg.mask.from_surface(sprite)
+                offset = (
+                    int(bullet.x - sprite.get_width()  / 2 - npc.position.x + npc.sprite.get_width()  / 2),
+                    int(bullet.y - sprite.get_height() / 2 - npc.position.y + npc.sprite.get_height() / 2)
+                )
+                result = npc_mask.overlap(bullet_mask, offset)
+                if result:
+                    print('Ship-Bullet collision detected')
+
 
         for crate_pos in self.crates:
             offset = (
@@ -97,7 +111,8 @@ class App:
 
 
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
-        BulletManager.render(self._SCREEN, self.camera)
+        for bullet in BulletManager._bullets:
+            Renderer.render_sprite(self._SCREEN, SpriteManager.get('cannon-ball'), (bullet.x, bullet.y), centered=True)
 
         Renderer.render_sprite(self._SCREEN, SpriteManager.get('menu'), (400, 70), centered=True)
 
