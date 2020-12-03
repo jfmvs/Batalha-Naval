@@ -30,16 +30,14 @@ class App:
         SpriteManager.rescale('menu', 0.9)
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
+        self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2,
+                             gun_type='1x3', guns=1, camera=self.camera)
         self.npcs   = [
-            Ship((randint(0, 1600), randint(0, 1200)), angle=randint(0, 360),
-                 sprite=SpriteManager.get('ship'), gun_type='1x3', stage=2, guns=4, camera=self.camera)
+            Npc((randint(0, 1600), randint(0, 1200)), angle=randint(0, 360), sprite=SpriteManager.get('ship'), stage=2,
+                   gun_type='1x3', guns=4, camera=self.camera, player=self.player)
             for _ in range(10)
         ]
         self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
-
-        self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2,
-                             gun_type='1x3', guns=4, camera=self.camera)
-
         self.crate_mask = pg.mask.from_surface(SpriteManager.get('crate'))
 
     def _update(self, dt, event):
@@ -86,6 +84,8 @@ class App:
                 self.crates.remove(crate_pos)
                 break
 
+        BulletManager.update(dt)
+
 
     def _render(self):
         """Construir cena"""
@@ -95,7 +95,9 @@ class App:
         for crate_pos in self.crates:
             Renderer.render_sprite(self._SCREEN, SpriteManager.get('crate'), crate_pos, self.camera)
 
+
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
+        BulletManager.render(self._SCREEN, self.camera)
 
         Renderer.render_sprite(self._SCREEN, SpriteManager.get('menu'), (0, 0))
 
