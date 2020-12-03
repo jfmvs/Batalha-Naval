@@ -6,6 +6,40 @@ from entities import *
 
 
 class App:
+    azul = pg.image.load('assets\\mazul.png')
+    mazul = pg.image.load('assets\mazul.png')
+    verde = pg.image.load('assets\\verde.png')
+    menu = pg.image.load('assets\menu.png')
+
+    def transformando(self):
+        escalaVida = 137/Ship.vidaTotal
+        vida = int(escalaVida * Ship.vidaAtual)
+        App.verde = pg.transform.scale(App.verde, (vida, 18))
+        escalaXP = 140 / Ship.xpNecessaria
+        barraxp = int(escalaXP * Ship.xp)
+        if Ship.xp <= Ship.xpNecessaria:
+            App.azul = pg.transform.scale(App.mazul, (barraxp, 20))
+        else:
+            App.azul = pg.transform.scale(App.mazul, (140, 20))
+
+    def status(self):
+        if type(Ship.health) == int:
+            Ship.vidaTotal = 100 + 20*Ship.health
+        if type(Ship.nivelTotal) == int:
+            Ship.xpNecessaria = 100 + 10*Ship.nivelTotal
+        else:
+            Ship.maximo = True
+        if Ship.power == 5:
+            Ship.power = 'MAX'
+        if Ship.calibre == 4:
+            Ship.calibre = 'MAX'
+        if Ship.health == 7:
+            Ship.health = 'MAX'
+        if Ship.guns == 3:
+            Ship.guns = 'MAX'
+        if Ship.nivelTotal == 19:
+            Ship.nivelTotal = 'MAX'
+
     def __init__(self):
         """Construtor"""
 
@@ -58,6 +92,40 @@ class App:
             self.player.rotate(dt)
         if kbd[pg.K_d]:
             self.player.rotate(dt, True)
+        if kbd[pg.K_l]:
+            Ship.xp += 100
+        if kbd[pg.K_k]:
+            Ship.xp -= 100
+        if kbd[pg.K_u]:
+            if Ship.xp >= Ship.xpNecessaria:
+                if type(Ship.power) == int:
+                    Ship.nivelTotal += 1
+                    Ship.xp -= Ship.xpNecessaria
+                    Ship.power += 1
+        if kbd[pg.K_i]:
+            if Ship.xp >= Ship.xpNecessaria:
+                if type(Ship.calibre) == int:
+                    Ship.nivelTotal += 1
+                    Ship.xp -= Ship.xpNecessaria
+                    Ship.calibre += 1
+        if kbd[pg.K_o]:
+            if Ship.xp >= Ship.xpNecessaria:
+                if type(Ship.health) == int:
+                    Ship.nivelTotal += 1
+                    Ship.xp -= Ship.xpNecessaria
+                    Ship.vidaAtual += 20
+                    Ship.health += 1
+        if kbd[pg.K_p]:
+            if Ship.xp >= Ship.xpNecessaria:
+                if type(Ship.guns) == int:
+                    Ship.nivelTotal += 1
+                    Ship.xp -= Ship.xpNecessaria
+                    Ship.guns += 1
+        if kbd[pg.K_m]:
+            if Ship.vidaAtual > 10:
+                Ship.vidaAtual -= 10
+        if kbd[pg.K_n]:
+            Ship.vidaAtual += 10
 
         self.player.update(dt, event)
         self.camera.center(self.player)
@@ -85,6 +153,8 @@ class App:
                 result = npc_mask.overlap(bullet_mask, offset)
                 if result:
                     print('Ship-Bullet collision detected')
+        App.transformando(self)
+        App.status(self)
 
 
         for crate_pos in self.crates:
@@ -115,6 +185,35 @@ class App:
             Renderer.render_sprite(self._SCREEN, SpriteManager.get('cannon-ball'), (bullet.x, bullet.y), centered=True)
 
         Renderer.render_sprite(self._SCREEN, SpriteManager.get('menu'), (400, 70), centered=True)
+        self._SCREEN.blit(self.verde, (149, 31))
+        self._SCREEN.blit(self.azul, (148, 80))
+        Renderer.render_text(self._SCREEN, f'{Ship.calibre}', (418, 73), font='Calibri', size=18, color=(0, 0, 0))
+        Renderer.render_text(self._SCREEN, f'{Ship.power}', (410, 31), font='Calibri', size=18, color=(0, 0, 0))
+        Renderer.render_text(self._SCREEN, f'{Ship.health}', (538, 31), font='Calibri', size=18, color=(0, 0, 0))
+        Renderer.render_text(self._SCREEN, f'{Ship.guns}', (530, 74), font='Calibri', size=18, color=(0, 0, 0))
+        Renderer.render_text(self._SCREEN, f'{Ship.nivelTotal}', (352, 13), font='Calibri', size=18, color=(0, 0, 0))
+        if Ship.maximo is False:
+            Renderer.render_text(self._SCREEN, f'{Ship.xp}/{Ship.xpNecessaria}', (180, 60), font='Calibri', size=18,
+                                 color=(0, 0, 0))
+            if Ship.xp >= Ship.xpNecessaria:
+                Renderer.render_text(self._SCREEN, 'Você pode melhorar um atributo!', (370, 12), font='Calibri',
+                                     size=17, color=(0, 0, 0))
+                if type(Ship.power) == int:
+                    Renderer.render_text(self._SCREEN, '[Press U]', (402, 52), font='Calibri', size=16, color=(0, 0, 0))
+                if type(Ship.calibre) == int:
+                    Renderer.render_text(self._SCREEN, '[Press I]', (410, 102),
+                                         font='Calibri', size=16, color=(0, 0, 0))
+                if type(Ship.health) == int:
+                    Renderer.render_text(self._SCREEN, '[Press O]', (525, 52), font='Calibri',
+                                         size=16, color=(0, 0, 0))
+                if type(Ship.guns) == int:
+                    Renderer.render_text(self._SCREEN, '[Press P]', (536, 100), font='Calibri',
+                                         size=16, color=(0, 0, 0))
+        else:
+            Renderer.render_text(self._SCREEN, 'MAXIMO ATINGIDO', (180, 60), font='Calibri', size=16, color=(0, 0, 0))
+        Renderer.render_text(self._SCREEN, f'{Ship.vidaAtual}/{Ship.vidaTotal}', (178, 11),
+                             font='Calibri', size=18,color=(0, 0, 0))
+
 
     def _render_debug_data(self):
         """Dados para depuração"""
