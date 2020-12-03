@@ -27,6 +27,8 @@ class App:
 
         SpriteManager.load('ship', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
+        SpriteManager.load('health-box', 'assets/health-box-2.png')
+        SpriteManager.load('ammo-crate', 'assets/ammo-crate.png')
         SpriteManager.load('bullet', 'assets/Bullet_3.png')
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
@@ -45,11 +47,11 @@ class App:
 
         for _ in range(randint(1, 5)):
             crates.append(
-                CaliberContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('crate'))
+                CaliberContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('ammo-crate'))
             )
         for _ in range(randint(1, 5)):
             crates.append(
-                HPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('crate'))
+                HPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('health-box'))
             )
         for _ in range(randint(1, 5)):
             crates.append(
