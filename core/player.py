@@ -27,6 +27,12 @@ class Player(Ship):
             elif event.key == pg.K_d:
                 self.rotate(dt)
 
+        elif event.type == pg.MOUSEBUTTONDOWN:
+            if pg.mouse.get_pressed()[0]:
+                for gun in self.guns:
+                    gun.fire(pg.mouse.get_pos())
+
         self.change_speed()
         self.move(dt)
         self.update_sprite(dt)
+        self.shoot_guns(dt)

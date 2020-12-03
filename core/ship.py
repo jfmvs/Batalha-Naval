@@ -78,6 +78,10 @@ class Ship:
         if self.speed_target > 0:
             self.speed_target -= 1
 
+    def shoot_guns(self, dt):
+        for gun in self.guns:
+            gun.fire(dt)
+
     def update_sprite(self, dt):
         self._render_sprite = pg.transform.rotate(self._original_sprite, self._angle)
         target = (0, 0)
@@ -86,3 +90,4 @@ class Ship:
 
     def update(self, dt, event):
         self.update_sprite(dt)
+        self.shoot_guns(dt)
