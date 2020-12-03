@@ -1,5 +1,6 @@
 import math
 import pygame as pg
+from .bullet_manager import BulletManager
 
 class Battery:
 
@@ -36,6 +37,8 @@ class Battery:
         self.original_image = pg.image.load(f"assets/{gun_type}_Gun_Small.png")
         self.image = pg.transform.rotate(self.original_image, (self.gun_angle + self.ship.angle) % 360)
 
+        self.global_pos = (0,0)
+
     def ready_aim(self, ship_image, target, dt):
 
         # compensa a posição do mouse em relação a camera
@@ -51,6 +54,7 @@ class Battery:
 
         offset = self.ship.camera.position - [self.ship.camera.width / 2, self.ship.camera.height / 2]
         gun_position += self.ship.position - offset
+        self.global_pos = [gun_position.x, gun_position.y]
 
         vertical_aim   = (gun_position[1] - target[1])
         horizontal_aim = (target[0] - gun_position[0])
@@ -113,10 +117,6 @@ class Battery:
         ship_image.blit(self.image, render_position)
         return ship_image
 
-    def fire(self, dt):
-       if self.aimed and self.reload == 0:
-            # Bullet()
-            self.reload = self.reload_time
-       else:
-           self.reload -= dt
-
+    def fire(self):
+        BulletManager.add(self.global_pos, self.gun_angle - self.ship.angle, 3)
+        self.reload = self.reload_time
