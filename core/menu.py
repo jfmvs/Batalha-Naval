@@ -16,7 +16,10 @@ class Menu:
         escalaXP    = 140 / self.player.xpNecessaria
         barraxp     = int(escalaXP * self.player.xp)
 
-        SpriteManager.resize('verde', (vida, 18))
+        try:
+            SpriteManager.resize('verde', (vida, 18))
+        except ValueError:
+            SpriteManager.resize('verde', (0, 18))
 
         try:
             if self.player.xp <= self.player.xpNecessaria:
