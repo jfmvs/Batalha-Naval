@@ -8,25 +8,38 @@ class Battery:
         # posição inicial a partir do centro / ângulo inicial / limites de ângulos sentidos horário|anti-horário
 
         1: [
-
-            [( 20,  0),   0, (210, 150), False],
-            [(-26,  0), 180, ( 10, 350), False],
-            [( -6,  2), 180, ( 190, 350), False],
-            [( -6, -2), 180, ( 10, 170), False]],
+            [(-15, 0), 180, (0, 0), (345, 15)],
+            [( 20, 0),   0, (210, 150), False],
+            [(-26, 0), 180, ( 10, 350), False],
+            [(-6,  2), 180, (190, 350), False],
+            [(-6, -2), 180, ( 10, 170), False]],
 
         2: [
 
-            [(45,  0), 0, (210, 150), False],
-            [(37,  0), 0, (225, 135), False],
-            [(10, -4), 270, (20,  165), False],
-            [(10,  4), 90, (195, 340), False]]
+            [( 45,  0),   0, (210, 150), False],
+            [( 37,  0),   0, (225, 135), False],
+            [(-45,  0), 180, (225, 135), False],
+            [(-55,  0), 180, (225, 135), False],
+            [( 10, -4), 270, ( 20, 165), False],
+            [( 10,  4),  90, (195, 340), False]],
+
+        3: [
+
+            [( 65, 0),   0, (210, 150), False],
+            [( 45, 0),   0, (225, 135), False],
+            [(-78, 0), 180, ( 45, 315), False],
+            [(-85, 0), 180, ( 45, 315), False]]
     }
 
     RELOAD_DATA = {
         # tempo de recarregamento
-        3: 0.1
+        1:  1.5,
+        2: 1.75,
+        3:    2,
+        4: 2.25,
+        5:  2.5,
+        6: 2.75
     }
-
     def __init__(self, ship, slot, gun_type):
 
         self.ship = ship
@@ -38,13 +51,18 @@ class Battery:
         self.reload = 0
 
         self.aim_angle = 0
-        self.rotation_speed = 30
+        self.rotation_speed = 75
         self.aimed = False
 
         self.original_image = pg.image.load(f"assets/{gun_type}_Gun_Small.png")
         self.image = pg.transform.rotate(self.original_image, (self.gun_angle + self.ship.angle) % 360)
 
         self.global_pos = (0,0)
+
+    def update_caliber(self, increase_caliber=True):
+        if increase_caliber: self.caliber += 1
+        self.original_image = pg.image.load(f"assets/{self.number}x{self.caliber}_Gun_Small.png")
+        self.reload_time = Battery.RELOAD_DATA[self.caliber]
 
     def ready_aim(self, ship_image, target, dt):
 
@@ -92,6 +110,7 @@ class Battery:
 
 
         if self.firing_angle[0] < self.firing_angle[1]:
+
             if self.gun_angle < self.firing_angle[0]:
                 self.gun_angle = self.firing_angle[0]
 
@@ -126,5 +145,20 @@ class Battery:
 
     def fire(self):
         if self.reload == 0 and self.aimed:
-            BulletManager.add(self.global_pos, (self.ship.angle + self.gun_angle) % 360, 3)
-            self.reload = self.reload_time
+            if self.safety_angle:
+                # Zona de não-tiro
+
+                if self.safety_angle[0] < self.gun_angle < self.safety_angle[1]:
+                    pass
+
+                elif (self.gun_angle > self.safety_angle[0] or self.safety_angle[1] > self.gun_angle) \
+                and self.safety_angle[1] < self.safety_angle[0]:
+                    pass
+
+                else:
+                    BulletManager.add(self.ship, self.global_pos, (self.ship.angle + self.gun_angle) % 360, self.caliber)
+                    self.reload = self.reload_time
+            else:
+                BulletManager.add(self.ship, self.global_pos, (self.ship.angle + self.gun_angle) % 360, self.caliber)
+                self.reload = self.reload_time
+
