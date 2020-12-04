@@ -30,6 +30,7 @@ class App:
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
         SpriteManager.load('health-box', 'assets/health-box-2.png')
         SpriteManager.load('ammo-crate', 'assets/ammo-crate.png')
+        SpriteManager.load('xp-crate', 'assets/xp-crate.png')
         SpriteManager.load('bullet', 'assets/Bullet_3.png')
         SpriteManager.load('crosshair', 'assets/crosshair.png')
         SpriteManager.rescale('crosshair', 0.5)
@@ -62,7 +63,7 @@ class App:
             )
         for _ in range(randint(1, 5)):
             crates.append(
-                XPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('crate'))
+                XPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('xp-crate'))
             )
         return crates
 
@@ -179,10 +180,6 @@ class App:
     def _render_debug_data(self):
         """Dados para depuração"""
 
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 5), msg='camera pos:      x: {:.2f},     y: {:.2f}'.format(
-            self.camera.position[0], self.camera.position[1]
-        ))
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 20), msg=f'scale: {self.camera.zoom:.2f}')
         Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 60), msg='player pos:     x: {:.2f},   y: {:.2f}'.format(
             *self.player.position
         ))
