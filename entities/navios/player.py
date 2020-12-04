@@ -1,5 +1,6 @@
 import pygame as pg
 from .ship import Ship
+from entities.battery import Battery
 
 
 class Player(Ship):
@@ -51,4 +52,8 @@ class Player(Ship):
     def level_up(self):
         self.nivelTotal += 1
         self.xp -= self.xpNecessaria
+
+    def gain_gun(self):
+        self.gun_count += 1
+        self.guns.append(Battery(self, self.gun_count, self.gun_type))
 

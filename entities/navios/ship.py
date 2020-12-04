@@ -36,6 +36,7 @@ class Ship:
         self.speed_target_list = self.stats["Speed Targets"]
         self.acceleration = self.stats["Acceleration"]
 
+        self.gun_type = gun_type
         self.guns = [Battery(self, i, gun_type) for i in range(guns)]
 
         self._render_sprite    = pg.transform.rotate(self.original_sprite, self._angle)

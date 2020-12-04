@@ -64,7 +64,7 @@ class Menu:
                 elif event.key == pg.K_p:
                     if type(self.player.gun_count) == int:
                         self.player.level_up()
-                        self.player.gun_count += 1
+                        self.player.gain_gun()
 
         self.transformando()
         self.status()
