@@ -19,28 +19,53 @@ class App:
         self._TARGET_FPS       = 60
         self._running          = False
         self._current_fps      = 60
+        pg.mouse.set_visible(False)
         pg.display.set_caption('Batalha Naval - Testes')
 
         # itens do jogo
 
         Renderer.init()
 
-        SpriteManager.load('ship', 'assets/Ship_Stage_2_Small.png')
+        SpriteManager.load('ship1', 'assets/Ship_Stage_1_Small.png')
+        SpriteManager.load('ship2', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
-        SpriteManager.load('menu', 'assets/menu.PNG')
-        SpriteManager.load('cannon-ball', 'assets/cannonball.png')
-        SpriteManager.rescale('cannon-ball', 0.5)
+        SpriteManager.load('health-box', 'assets/health-box-2.png')
+        SpriteManager.load('xp-crate', 'assets/xp-crate.png')
+        SpriteManager.load('bullet', 'assets/Bullet_3.png')
+        SpriteManager.load('crosshair', 'assets/crosshair.png')
+        SpriteManager.rescale('crosshair', 0.5)
+
+        BulletManager.set_sprite(SpriteManager.get('bullet'))
+
+        Ship.init((2, SpriteManager.get('ship2')), (1, SpriteManager.get('ship1')))
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
-        self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2,
+        self.player = Player((400, 300), stage=1,
                              gun_type='1x3', guns=1, camera=self.camera)
         self.npcs   = [
-            Npc((randint(0, 1600), randint(0, 1200)), angle=randint(0, 360), sprite=SpriteManager.get('ship'), stage=2,
+            Npc((randint(0, 800), randint(0, 600)), angle=randint(0, 360), stage=2,
                    gun_type='1x3', guns=4, camera=self.camera, player=self.player)
-            for _ in range(10)
+            for _ in range(3)
         ]
-        self.crates = [(randint(0, 1600), randint(0, 1200)) for _ in range(10)]
-        self.crate_mask = pg.mask.from_surface(SpriteManager.get('crate'))
+        self.crates = self.get_crates()
+        self.menu = Menu(self.player)
+
+    def get_crates(self):
+        crates = []
+
+        for _ in range(randint(1, 5)):
+            crates.append(
+                HPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('health-box'))
+            )
+        for _ in range(randint(1, 5)):
+            crates.append(
+                PowerContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('crate'))
+            )
+        for _ in range(randint(1, 5)):
+            crates.append(
+                XPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('xp-crate'))
+            )
+        return crates
 
     def _update(self, dt, event):
         """Mudanças de estado"""
@@ -58,9 +83,19 @@ class App:
             self.player.rotate(dt)
         if kbd[pg.K_d]:
             self.player.rotate(dt, True)
+        if kbd[pg.K_l]:
+            self.player.xp += 10
+        if kbd[pg.K_k]:
+            self.player.xp -= 10
+        if kbd[pg.K_m]:
+            if self.player.vidaAtual > 10:
+                self.player.vidaAtual -= 10
+        if kbd[pg.K_n]:
+            self.player.vidaAtual += 10
 
         self.player.update(dt, event)
         self.camera.center(self.player)
+        self.menu.update(event)
 
         player_mask = pg.mask.from_surface(self.player.sprite)
 
@@ -75,27 +110,21 @@ class App:
             if result:
                 print('Player-Ship collision detected')
 
-            for bullet in BulletManager._bullets:
-                sprite = SpriteManager.get('cannon-ball')
-                bullet_mask = pg.mask.from_surface(sprite)
+            for bullet in BulletManager.active_bullets():
                 offset = (
-                    int(bullet.x - sprite.get_width()  / 2 - npc.position.x + npc.sprite.get_width()  / 2),
-                    int(bullet.y - sprite.get_height() / 2 - npc.position.y + npc.sprite.get_height() / 2)
-                )
-                result = npc_mask.overlap(bullet_mask, offset)
+                    int(bullet.x - (BulletManager.get_sprite_width()  / 2) - (npc.position.x - (npc.sprite.get_width() / 2) -
+                                                               (self.camera.position[0] - (self._SCREEN_WIDTH / 2)))),
+                    int(bullet.y - (BulletManager.get_sprite_height() / 2) - (npc.position.y - (npc.sprite.get_height() / 2)) +
+                        (self.camera.position[1] - (self._SCREEN_HEIGHT / 2))))
+
+                result = npc_mask.overlap(BulletManager.get_mask(), offset)
                 if result:
                     print('Ship-Bullet collision detected')
 
-
-        for crate_pos in self.crates:
-            offset = (
-                int(self.player.position.x - self.player.sprite.get_width()  / 2 - crate_pos[0]),
-                int(self.player.position.y - self.player.sprite.get_height() / 2 - crate_pos[1])
-            )
-            result = self.crate_mask.overlap(player_mask, offset)
-            if result:
-                print('Crate Collected')
-                self.crates.remove(crate_pos)
+        for crate in self.crates:
+            crate.overlap()
+            if not crate.active:
+                self.crates.remove(crate)
                 break
 
         BulletManager.update(dt)
@@ -106,23 +135,23 @@ class App:
 
         for npc in self.npcs:
             Renderer.render_ship(self._SCREEN, npc, self.camera)
-        for crate_pos in self.crates:
-            Renderer.render_sprite(self._SCREEN, SpriteManager.get('crate'), crate_pos, self.camera)
-
+        for crate in self.crates:
+            Renderer.render_sprite(self._SCREEN, crate.sprite, crate.position, self.camera)
 
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
-        for bullet in BulletManager._bullets:
-            Renderer.render_sprite(self._SCREEN, SpriteManager.get('cannon-ball'), (bullet.x, bullet.y), centered=True)
 
-        Renderer.render_sprite(self._SCREEN, SpriteManager.get('menu'), (400, 70), centered=True)
+        for bullet in BulletManager.active_bullets():
+            sprite = pg.transform.rotate(BulletManager.get_sprite(), bullet.angle)
+            Renderer.render_sprite(self._SCREEN, sprite, (bullet.x, bullet.y), centered=True)
+
+        self.menu.render(self._SCREEN)
+
+        Renderer.render_sprite(self._SCREEN, SpriteManager.get('crosshair'), pg.mouse.get_pos(), centered=True)
+
 
     def _render_debug_data(self):
         """Dados para depuração"""
 
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 5), msg='camera pos:      x: {:.2f},     y: {:.2f}'.format(
-            self.camera.position[0], self.camera.position[1]
-        ))
-        Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 20), msg=f'scale: {self.camera.zoom:.2f}')
         Renderer.render_debug_msg(self._SCREEN, pos=(10, 150 + 60), msg='player pos:     x: {:.2f},   y: {:.2f}'.format(
             *self.player.position
         ))
