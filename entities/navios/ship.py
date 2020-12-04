@@ -87,7 +87,7 @@ class Ship:
         if self.speed_target > 0:
             self.speed_target -= 1
 
-    def shoot_guns(self, dt):
+    def shoot_guns(self):
         for gun in self.guns:
             gun.fire()
 
