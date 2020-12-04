@@ -5,11 +5,25 @@ class Ship:
 
     SHIP_STATS = {
 
+        1: {
+            "Turning Rate": 36,
+            "Top Speed": "%.2f" % 50,
+            "Speed Targets": [0, 30, 60, 90, 120],
+            "Acceleration": 2
+        },
+
         2: {
             "Turning Rate": 24,
             "Top Speed": "%.2f" % 40,
-            "Speed Targets": [0, 30, 60, 90, 120],
+            "Speed Targets": [0, 25, 50, 75, 100],
             "Acceleration": 1.5
+        },
+
+        3: {
+            "Turning Rate": 20,
+            "Top Speed": "%.2f" % 32,
+            "Speed Targets": [0, 20, 40, 60, 80],
+            "Acceleration": 1.6
         }
     }
 
@@ -30,6 +44,7 @@ class Ship:
         self.stats = Ship.SHIP_STATS[self.stage]
 
         self._angular_speed = self.stats["Turning Rate"]
+        self.power = 0
 
         self.speed = 0
         self.speed_target = 0
@@ -87,6 +102,9 @@ class Ship:
         if self.speed_target > 0:
             self.speed_target -= 1
 
+    def new_guns(self, number):
+        return [Battery(self, i, self.gun_type) for i in range(number)]
+    
     def shoot_guns(self):
         for gun in self.guns:
             gun.fire()

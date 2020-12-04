@@ -3,6 +3,25 @@ from .sprite_manager import SpriteManager
 from .renderer import Renderer
 
 class Menu:
+    STAGE_STATUS = {
+        1: 20,
+        2: 100,
+        3: 300
+    }
+    BASE_STATS = {
+        # power, health, caliber, guns
+        1: [0, 2, 2, 1],
+        2: [0, 2, 3, 2],
+        3: [0, 2, 4, 2]
+    }
+
+    END_STATS = {
+        # power, health, caliber, guns, max_level
+        1: [5, 7, 4, 5, 14],
+        2: [5, 7, 5, 6, 16],
+        3: [5, 7, 6, 4, 16]
+    }
+
     def __init__(self, player):
         SpriteManager.load('menu', 'assets/menu.PNG')
         SpriteManager.load('azul', 'assets/azul.png')
@@ -17,9 +36,9 @@ class Menu:
         barraxp     = int(escalaXP * self.player.xp)
 
         try:
-            SpriteManager.resize('verde', (vida, 18))
+            SpriteManager.resize('verde', (vida or 1, 18))
         except ValueError:
-            SpriteManager.resize('verde', (0, 18))
+            SpriteManager.resize('verde', (1, 18))
 
         try:
             if self.player.xp <= self.player.xpNecessaria:
@@ -30,28 +49,30 @@ class Menu:
             pass
 
     def status(self):
+
         if type(self.player.health) == int:
-            self.player.vidaTotal = 100 + 20 * self.player.health + 140 * (self.player.stage - 1)
+            self.player.vidaTotal = (20 * self.player.health) + Menu.STAGE_STATUS[self.player.stage]
         if type(self.player.nivelTotal) == int:
-            self.player.xpNecessaria = 100 + 10 * self.player.nivelTotal + 190 * (self.player.stage - 1)
+            self.player.xpNecessaria = (20 * self.player.nivelTotal) + Menu.STAGE_STATUS[self.player.stage]
         else:
             self.player.maximo = True
 
-        if self.player.power == 5:
+        if self.player.power == Menu.END_STATS[self.player.stage][0]:
             self.player.power = 'MAX'
-        if self.player.calibre == 4:
-            self.player.calibre = 'MAX'
-        if self.player.health == 7:
+        if self.player.health == Menu.END_STATS[self.player.stage][1]:
             self.player.health = 'MAX'
-        if self.player.gun_count == 4:
+        if self.player.calibre == Menu.END_STATS[self.player.stage][2]:
+            self.player.calibre = 'MAX'
+        if self.player.gun_count == Menu.END_STATS[self.player.stage][3]:
             self.player.gun_count = 'MAX'
-        if self.player.nivelTotal == 20:
+        if self.player.nivelTotal == Menu.END_STATS[self.player.stage][4] and self.player.stage != 3:
             self.player.stage += 1
             self.player.nivelTotal = 0
-            self.player.power = 0
-            self.player.health = 0
-            self.player.calibre = 0
-            self.player.gun_count = 0
+            self.player.power = Menu.BASE_STATS[self.player.stage][0]
+            self.player.health = Menu.BASE_STATS[self.player.stage][1]
+            self.player.calibre = Menu.BASE_STATS[self.player.stage][2]
+            self.player.gun_count = Menu.BASE_STATS[self.player.stage][3]
+            self.player.guns = self.player.new_guns(self.player.gun_count)
 
     def update(self, event):
         if self.player.xp >= self.player.xpNecessaria:
@@ -64,6 +85,9 @@ class Menu:
                     if type(self.player.calibre) == int:
                         self.player.level_up()
                         self.player.calibre += 1
+                        for gun in self.player.guns:
+                            gun.update_caliber()
+
                 elif event.key == pg.K_o:
                     if type(self.player.health) == int:
                         self.player.level_up()

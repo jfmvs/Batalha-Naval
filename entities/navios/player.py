@@ -4,19 +4,21 @@ from entities.battery import Battery
 
 
 class Player(Ship):
+    STAGE_STATUS = [30, 200, 500]
+
     def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, **kwargs):
         super().__init__(pos, stage, gun_type, guns, **kwargs)
 
         self.nivelTotal = 0
         self.xp = 0
-        self.xpNecessaria = 100
-        self.calibre = int(0)
+        self.xpNecessaria = 30
+        self.calibre = int(2)
         self.power = int(0)
-        self.gun_count = int(0)
-        self.health = int(0)
+        self.gun_count = int(2)
+        self.health = int(2)
         self.maximo = False
-        self.vidaTotal = 100 + 10 * self.health
-        self.vidaAtual = 100
+        self.vidaTotal = (20 * self.health) + Player.STAGE_STATUS[self.stage - 1]
+        self.vidaAtual = 60
 
     def update_sprite(self, dt):
         self._render_sprite = pg.transform.rotate(self.original_sprite, self._angle)
@@ -55,5 +57,5 @@ class Player(Ship):
 
     def gain_gun(self):
         self.gun_count += 1
-        self.guns.append(Battery(self, self.gun_count, self.gun_type))
+        self.guns.append(Battery(self, self.gun_count - 1, self.gun_type))
 

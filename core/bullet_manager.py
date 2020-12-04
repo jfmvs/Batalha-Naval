@@ -9,8 +9,8 @@ class BulletManager:
     _mask    = None
 
     @staticmethod
-    def add(position, angle, caliber):
-        BulletManager._bullets.append(Bullet(position, angle, caliber))
+    def add(owner, position, angle, caliber):
+        BulletManager._bullets.append(Bullet(owner, position, angle, caliber))
 
     @staticmethod
     def set_sprite(sprite):

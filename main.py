@@ -6,6 +6,9 @@ from entities import *
 
 
 class App:
+
+
+
     def __init__(self):
         """Construtor"""
 
@@ -19,8 +22,10 @@ class App:
         self._TARGET_FPS       = 60
         self._running          = False
         self._current_fps      = 60
+        self._enemy_index      = 0
         pg.mouse.set_visible(False)
         pg.display.set_caption('Batalha Naval')
+        pg.display.set_icon(pg.image.load("assets/Logo Batalha Naval.png"))
 
         # itens do jogo
 
@@ -28,6 +33,7 @@ class App:
 
         SpriteManager.load('ship1', 'assets/Ship_Stage_1_Small.png')
         SpriteManager.load('ship2', 'assets/Ship_Stage_2_Small.png')
+        SpriteManager.load('ship3', 'assets/Ship_Stage_3_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
         SpriteManager.load('health-box', 'assets/health-box-2.png')
         SpriteManager.load('xp-crate', 'assets/xp-crate.png')
@@ -37,7 +43,7 @@ class App:
 
         BulletManager.set_sprite(SpriteManager.get('bullet'))
 
-        Ship.init((2, SpriteManager.get('ship2')), (1, SpriteManager.get('ship1')))
+        Ship.init((1, SpriteManager.get('ship1')), (2, SpriteManager.get('ship2')), (3, SpriteManager.get('ship3')))
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
         self.player = Player((400, 300), stage=2,
@@ -49,6 +55,30 @@ class App:
         ]
         self.crates = self.get_crates()
         self.menu = Menu(self.player)
+
+    def new_enemies(self, index):
+        ENEMY_LIST = [
+            [Npc(self.camera.position + (randint(-400, 400), randint(-300, 300)), angle=randint(0, 360), stage=1,
+                 gun_type='1x1', guns=1, camera=self.camera, player=self.player) for _ in range(1)],
+            [Npc(self.camera.position + (randint(-400, 400), randint(-300, 300)), angle=randint(0, 360), stage=1,
+                 gun_type='1x1', guns=1, camera=self.camera, player=self.player) for _ in range(2)],
+            [Npc(self.camera.position + (randint(-400, 400), randint(-300, 300)), angle=randint(0, 360), stage=1,
+                 gun_type='1x1', guns=1, camera=self.camera, player=self.player) for _ in range(3)],
+            [Npc(self.camera.position + (randint(-400, 400), randint(-300, 300)), angle=randint(0, 360), stage=1,
+                 gun_type='1x1', guns=1, camera=self.camera, player=self.player) for _ in range(4)],
+            [Npc(self.camera.position + (randint(-400, 400), randint(-300, 300)), angle=randint(0, 360), stage=1,
+                 gun_type='1x1', guns=2, camera=self.camera, player=self.player) for _ in range(2)],
+            [Npc(self.camera.position + (randint(-400, 400), randint(-300, 300)), angle=randint(0, 360), stage=1,
+                 gun_type='1x1', guns=2, camera=self.camera, player=self.player) for _ in range(3)],
+            [Npc(self.camera.position + (randint(-400, 400), randint(-300, 300)), angle=randint(0, 360), stage=1,
+                 gun_type='1x2', guns=2, camera=self.camera, player=self.player) for _ in range(3)],
+            [Npc(self.camera.position + (randint(-400, 400), randint(-300, 300)), angle=randint(0, 360), stage=1,
+                 gun_type='1x2', guns=3, camera=self.camera, player=self.player) for _ in range(3)],
+            [Npc(self.camera.position + (randint(-400, 400), randint(-300, 300)), angle=randint(0, 360), stage=1,
+                 gun_type='1x2', guns=3, camera=self.camera, player=self.player) for _ in range(4)]
+        ]
+        index += 1
+        return ENEMY_LIST[index - 1], index
 
     def get_crates(self):
         crates = []
@@ -114,9 +144,32 @@ class App:
                         (self.camera.position[1] - (self._SCREEN_HEIGHT / 2))))
 
                 result = npc_mask.overlap(BulletManager.get_mask(), offset)
-                if result:
+                
+                if result and bullet.owner not in self.npcs:
+                    npc.vidaAtual -= bullet.damage
                     bullet.lifetime = 0
-                    print('Ship-Bullet collision detected')
+
+        alive_npcs = []
+        for npc in self.npcs:
+            if npc.vidaAtual > 0:
+                alive_npcs.append(npc)
+            else:
+                self.crates.append(XPContainer(self.player, npc.position, SpriteManager.get('xp-crate'), npc.stage))
+        self.npcs = alive_npcs.copy()
+
+        for bullet in BulletManager.active_bullets():
+            offset = (
+                int(bullet.x - (BulletManager.get_sprite_width() / 2) -
+                    (self.player.position.x - (self.player.sprite.get_width() / 2) -
+                    (self.camera.position[0] - (self._SCREEN_WIDTH / 2)))),
+                int(bullet.y - (BulletManager.get_sprite_height() / 2) -
+                    (self.player.position.y - (self.player.sprite.get_height() / 2)) +
+                    (self.camera.position[1] - (self._SCREEN_HEIGHT / 2))))
+
+            result = player_mask.overlap(BulletManager.get_mask(), offset)
+            if result and not self.player == bullet.owner:
+                self.player.vidaAtual -= bullet.damage
+                bullet.lifetime = 0
 
         for crate in self.crates:
             crate.overlap()
@@ -125,6 +178,9 @@ class App:
                 break
 
         BulletManager.update(dt)
+
+        if len(self.npcs) == 0:
+            self.npcs, self._enemy_index = self.new_enemies(self._enemy_index)
 
 
     def _render(self):
