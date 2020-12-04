@@ -25,6 +25,7 @@ class App:
         self._enemy_index      = 0
         pg.mouse.set_visible(False)
         pg.display.set_caption('Batalha Naval')
+        pg.display.set_icon(pg.image.load("assets/Logo Batalha Naval.png"))
 
         # itens do jogo
 
