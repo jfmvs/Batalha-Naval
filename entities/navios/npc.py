@@ -14,30 +14,37 @@ class Npc(Ship):
             self._render_sprite = gun.ready_aim(self._render_sprite, target, dt)
 
     def update(self, dt, event):
-
-        attack_angle = (self.angle - self.player.angle + 180) % 360
-        max_distance, optimal_distance, min_distance = 100, 50, 30
+        attack_angle = (self.angle - self.player.angle) % 360
+        difference_angle = ((math.degrees(math.atan2(self.position[0] - self.player.position[0],
+                                                     self.player.position[1] - self.position[
+                                                         1]))) + self.angle + 90) % 360
+        min_distance = 200
         distance = self.player.position - self.position
         distance = math.sqrt(distance[0] ** 2 + distance[1] ** 2)
 
-        if max_distance > distance > optimal_distance and 90 < attack_angle < 270:
-            self.increase_speed()
-        elif distance > max_distance and 150 < attack_angle < 210:
-            self.increase_speed()
-        else:
-            self.decrease_speed()
+        if distance > min_distance:
+            if 270 < difference_angle or difference_angle < 90:
+                self.increase_speed()
+                if 0 < difference_angle < 180:
+                    self.rotate(dt, True)
+                else:
+                    self.rotate(dt)
 
-        if distance > max_distance:
-            if attack_angle > 180:
-                self.rotate(dt, True)
-            elif attack_angle < 180:
-                self.rotate(dt)
-        elif distance > optimal_distance:
-            if attack_angle > 190:
-                self.rotate(dt, True)
-            elif attack_angle < 170:
-                self.rotate(dt)
+            else:
+                self.decrease_speed()
+
+                if 0 < difference_angle < 180:
+                    self.rotate(dt, True)
+                else:
+                    self.rotate(dt)
         else:
+
+            if 270 < difference_angle or difference_angle < 90:
+                self.decrease_speed()
+
+            else:
+                self.increase_speed()
+
             if attack_angle < 180:
                 self.rotate(dt, True)
             elif attack_angle > 180:
@@ -46,3 +53,4 @@ class Npc(Ship):
         self.change_speed()
         self.move(dt)
         self.update_sprite(dt)
+
