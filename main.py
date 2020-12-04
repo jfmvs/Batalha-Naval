@@ -20,7 +20,7 @@ class App:
         self._running          = False
         self._current_fps      = 60
         pg.mouse.set_visible(False)
-        pg.display.set_caption('Batalha Naval - Testes')
+        pg.display.set_caption('Batalha Naval')
 
         # itens do jogo
 
