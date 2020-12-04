@@ -3,13 +3,21 @@ from .ship import Ship
 import math
 
 class Npc(Ship):
+
+    HEALTH_DATA = {
+        1: 20,
+        2: 100,
+        3: 500
+    }
+
     def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, player, **kwargs):
         super().__init__(pos, stage, gun_type, guns, **kwargs)
+        self.vidaAtual = Npc.HEALTH_DATA[self.stage]
         self.player = player
 
     def update_sprite(self, dt):
         self._render_sprite = pg.transform.rotate(self.original_sprite, self._angle)
-        target = self.player.position - self.position
+        target = self.player.position - self.position + [self.camera.width / 2, +self.camera.height / 2]
         for gun in self.guns:
             self._render_sprite = gun.ready_aim(self._render_sprite, target, dt)
 
@@ -18,7 +26,7 @@ class Npc(Ship):
         difference_angle = ((math.degrees(math.atan2(self.position[0] - self.player.position[0],
                                                      self.player.position[1] - self.position[
                                                          1]))) + self.angle + 90) % 360
-        min_distance = 200
+        min_distance = 100
         distance = self.player.position - self.position
         distance = math.sqrt(distance[0] ** 2 + distance[1] ** 2)
 
@@ -53,4 +61,6 @@ class Npc(Ship):
         self.change_speed()
         self.move(dt)
         self.update_sprite(dt)
-
+        self.shoot_guns()
+        for gun in self.guns:
+            gun.reload = max([0, gun.reload - dt])
