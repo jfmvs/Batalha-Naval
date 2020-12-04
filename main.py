@@ -40,7 +40,7 @@ class App:
         Ship.init((2, SpriteManager.get('ship2')), (1, SpriteManager.get('ship1')))
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
-        self.player = Player((400, 300), stage=1,
+        self.player = Player((400, 300), stage=2,
                              gun_type='1x3', guns=1, camera=self.camera)
         self.npcs   = [
             Npc((randint(0, 800), randint(0, 600)), angle=randint(0, 360), stage=2,
