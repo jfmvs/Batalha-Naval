@@ -47,13 +47,3 @@ class Renderer:
             coords[1] -= camera.position.y - surface.get_height() // 2
 
         surface.blit(sprite, coords)
-
-    @staticmethod
-    def render_text(surface, msg, pos, centered=False, font='Arial', size=16, color=(255, 255, 255)):
-        font = pg.font.SysFont(font, size)
-        render_surface = font.render(msg, True, color)
-        coords = list(pos)
-        if centered:
-            coords[0] -= render_surface.get_width() // 2
-            coords[1] -= render_surface.get_height() // 2
-        surface.blit(render_surface, coords)
