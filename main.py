@@ -30,7 +30,6 @@ class App:
         SpriteManager.load('ship2', 'assets/Ship_Stage_2_Small.png')
         SpriteManager.load('crate', 'assets/floating-crate-3.png')
         SpriteManager.load('health-box', 'assets/health-box-2.png')
-        SpriteManager.load('ammo-crate', 'assets/ammo-crate.png')
         SpriteManager.load('xp-crate', 'assets/xp-crate.png')
         SpriteManager.load('bullet', 'assets/Bullet_3.png')
         SpriteManager.load('crosshair', 'assets/crosshair.png')
@@ -54,10 +53,6 @@ class App:
     def get_crates(self):
         crates = []
 
-        for _ in range(randint(1, 5)):
-            crates.append(
-                CaliberContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('ammo-crate'))
-            )
         for _ in range(randint(1, 5)):
             crates.append(
                 HPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('health-box'))
