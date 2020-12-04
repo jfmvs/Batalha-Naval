@@ -104,7 +104,7 @@ class Ship:
 
     def new_guns(self, number):
         return [Battery(self, i, self.gun_type) for i in range(number)]
-    
+
     def shoot_guns(self):
         for gun in self.guns:
             gun.fire()
