@@ -35,6 +35,8 @@ class App:
         SpriteManager.load('crosshair', 'assets/crosshair.png')
         SpriteManager.rescale('crosshair', 0.5)
 
+        BulletManager.set_sprite(SpriteManager.get('bullet'))
+
         self.camera = Camera((400, 300), self._SCREEN.get_size())
         self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2,
                              gun_type='1x3', guns=1, camera=self.camera)
@@ -135,15 +137,13 @@ class App:
                 print('Player-Ship collision detected')
 
             for bullet in BulletManager.active_bullets():
-                sprite = SpriteManager.get('bullet')
-                bullet_mask = pg.mask.from_surface(sprite)
                 offset = (
-                    int(bullet.x - (sprite.get_width() / 2) - (npc.position.x - (npc.sprite.get_width() / 2) -
+                    int(bullet.x - (BulletManager.get_sprite_width()  / 2) - (npc.position.x - (npc.sprite.get_width() / 2) -
                                                                (self.camera.position[0] - (self._SCREEN_WIDTH / 2)))),
-                    int(bullet.y - (sprite.get_height() / 2) - (npc.position.y - (npc.sprite.get_height() / 2)) +
+                    int(bullet.y - (BulletManager.get_sprite_height() / 2) - (npc.position.y - (npc.sprite.get_height() / 2)) +
                         (self.camera.position[1] - (self._SCREEN_HEIGHT / 2))))
 
-                result = npc_mask.overlap(bullet_mask, offset)
+                result = npc_mask.overlap(BulletManager.get_mask(), offset)
                 if result:
                     print('Ship-Bullet collision detected')
 
@@ -168,8 +168,7 @@ class App:
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
 
         for bullet in BulletManager.active_bullets():
-            sprite = SpriteManager.get('bullet').copy()
-            sprite = pg.transform.rotate(sprite, bullet.angle)
+            sprite = pg.transform.rotate(BulletManager.get_sprite(), bullet.angle)
             Renderer.render_sprite(self._SCREEN, sprite, (bullet.x, bullet.y), centered=True)
 
         self.menu.render(self._SCREEN)
