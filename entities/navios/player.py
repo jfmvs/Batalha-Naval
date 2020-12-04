@@ -47,3 +47,8 @@ class Player(Ship):
         self.change_speed()
         self.move(dt)
         self.update_sprite(dt)
+
+    def level_up(self):
+        self.nivelTotal += 1
+        self.xp -= self.xpNecessaria
+
