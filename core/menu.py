@@ -40,9 +40,9 @@ class Menu:
             self.player.calibre = 'MAX'
         if self.player.health == 7:
             self.player.health = 'MAX'
-        if self.player.gun_count == 3:
+        if self.player.gun_count == 4:
             self.player.gun_count = 'MAX'
-        if self.player.nivelTotal == 19:
+        if self.player.nivelTotal == 20:
             self.player.stage += 1
             self.player.nivelTotal = 0
             self.player.power = 0
