@@ -45,7 +45,27 @@ class Menu:
         if self.player.nivelTotal == 19:
             self.player.nivelTotal = 'MAX'
 
-    def update(self):
+    def update(self, event):
+        if self.player.xp >= self.player.xpNecessaria:
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_u:
+                    if type(self.player.power) == int:
+                        self.player.level_up()
+                        self.player.power += 1
+                elif event.key == pg.K_i:
+                    if type(self.player.calibre) == int:
+                        self.player.level_up()
+                        self.player.calibre += 1
+                elif event.key == pg.K_o:
+                    if type(self.player.health) == int:
+                        self.player.level_up()
+                        self.player.vidaAtual += 20
+                        self.player.health += 1
+                elif event.key == pg.K_p:
+                    if type(self.player.gun_count) == int:
+                        self.player.level_up()
+                        self.player.gun_count += 1
+
         self.transformando()
         self.status()
 

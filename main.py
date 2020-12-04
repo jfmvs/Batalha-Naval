@@ -92,31 +92,6 @@ class App:
             self.player.xp += 10
         if kbd[pg.K_k]:
             self.player.xp -= 10
-        if kbd[pg.K_u]:
-            if self.player.xp >= self.player.xpNecessaria:
-                if type(self.player.power) == int:
-                    self.player.nivelTotal += 1
-                    self.player.xp -= self.player.xpNecessaria
-                    self.player.power += 1
-        if kbd[pg.K_i]:
-            if self.player.xp >= self.player.xpNecessaria:
-                if type(self.player.calibre) == int:
-                    self.player.nivelTotal += 1
-                    self.player.xp -= self.player.xpNecessaria
-                    self.player.calibre += 1
-        if kbd[pg.K_o]:
-            if self.player.xp >= self.player.xpNecessaria:
-                if type(self.player.health) == int:
-                    self.player.nivelTotal += 1
-                    self.player.xp -= self.player.xpNecessaria
-                    self.player.vidaAtual += 20
-                    self.player.health += 1
-        if kbd[pg.K_p]:
-            if self.player.xp >= self.player.xpNecessaria:
-                if type(self.player.gun_count) == int:
-                    self.player.nivelTotal += 1
-                    self.player.xp -= self.player.xpNecessaria
-                    self.player.gun_count += 1
         if kbd[pg.K_m]:
             if self.player.vidaAtual > 10:
                 self.player.vidaAtual -= 10
@@ -125,6 +100,7 @@ class App:
 
         self.player.update(dt, event)
         self.camera.center(self.player)
+        self.menu.update(event)
 
         player_mask = pg.mask.from_surface(self.player.sprite)
 
@@ -157,7 +133,6 @@ class App:
                 break
 
         BulletManager.update(dt)
-        self.menu.update()
 
 
     def _render(self):
