@@ -5,5 +5,5 @@ class XPContainer(Container):
         super().__init__(player, pos, sprite)
 
     def effect(self):
-        self.player.xp += 10
+        self.player.xp += 20
 
