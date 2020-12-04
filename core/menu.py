@@ -28,9 +28,9 @@ class Menu:
 
     def status(self):
         if type(self.player.health) == int:
-            self.player.vidaTotal = 100 + 20 * self.player.health
+            self.player.vidaTotal = 100 + 20 * self.player.health + 140 * (self.player.stage - 1)
         if type(self.player.nivelTotal) == int:
-            self.player.xpNecessaria = 100 + 10 * self.player.nivelTotal
+            self.player.xpNecessaria = 100 + 10 * self.player.nivelTotal + 190 * (self.player.stage - 1)
         else:
             self.player.maximo = True
 
@@ -43,7 +43,12 @@ class Menu:
         if self.player.gun_count == 3:
             self.player.gun_count = 'MAX'
         if self.player.nivelTotal == 19:
-            self.player.nivelTotal = 'MAX'
+            self.player.stage += 1
+            self.player.nivelTotal = 0
+            self.player.power = 0
+            self.player.health = 0
+            self.player.calibre = 0
+            self.player.gun_count = 0
 
     def update(self, event):
         if self.player.xp >= self.player.xpNecessaria:
@@ -79,6 +84,7 @@ class Menu:
         Renderer.render_text(surface, f'{self.player.health}',     (538, 31), font='Calibri', size=18, color=(0, 0, 0))
         Renderer.render_text(surface, f'{self.player.gun_count}',  (530, 74), font='Calibri', size=18, color=(0, 0, 0))
         Renderer.render_text(surface, f'{self.player.nivelTotal}', (352, 13), font='Calibri', size=18, color=(0, 0, 0))
+        Renderer.render_text(surface, f'{self.player.stage}', (640, 87), font='Calibri', size=25, color=(0, 0, 0))
 
         if self.player.maximo is False:
             Renderer.render_text(surface, f'{self.player.xp}/{self.player.xpNecessaria}',
