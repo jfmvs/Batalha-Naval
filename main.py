@@ -119,6 +119,7 @@ class App:
 
                 result = npc_mask.overlap(BulletManager.get_mask(), offset)
                 if result:
+                    bullet.lifetime = 0
                     print('Ship-Bullet collision detected')
 
         for crate in self.crates:
