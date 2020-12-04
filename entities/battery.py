@@ -5,31 +5,38 @@ from core.bullet_manager import BulletManager
 class Battery:
 
     MOUNT_DATA = {
-        2: [
         # posição inicial a partir do centro / ângulo inicial / limites de ângulos sentidos horário|anti-horário
-            [(45,  0), 0, (210, 150)],
-            [(37,  0), 0, (225, 135)],
-            [(10, -4), 0, (20,  165)],
-            [(10,  4), 0, (195, 340)]]
+
+        1: [
+
+            [( 20,  0),   0, (210, 150), False],
+            [(-26,  0), 180, ( 10, 350), False],
+            [( -6,  2), 180, ( 190, 350), False],
+            [( -6, -2), 180, ( 10, 170), False]],
+
+        2: [
+
+            [(45,  0), 0, (210, 150), False],
+            [(37,  0), 0, (225, 135), False],
+            [(10, -4), 270, (20,  165), False],
+            [(10,  4), 90, (195, 340), False]]
     }
 
     RELOAD_DATA = {
         # tempo de recarregamento
-        3: 4
+        3: 0.1
     }
 
     def __init__(self, ship, slot, gun_type):
 
         self.ship = ship
-        self.mount, self.resting_angle, self.firing_angle = Battery.MOUNT_DATA[self.ship.stage][slot]
+        self.mount, self.gun_angle, self.firing_angle, self.safety_angle = Battery.MOUNT_DATA[self.ship.stage][slot]
         self.mount = pg.Vector2(self.mount)
 
         self.number, self.caliber = [int(i) for i in gun_type.split("x")]
         self.reload_time = Battery.RELOAD_DATA[self.caliber]
         self.reload = 0
 
-
-        self.gun_angle = 0
         self.aim_angle = 0
         self.rotation_speed = 30
         self.aimed = False
@@ -101,7 +108,7 @@ class Battery:
 
         self.gun_angle %= 360
 
-        if (self.gun_angle - self.aim_angle) % 360 < 1:
+        if (self.gun_angle - self.aim_angle) % 360 < 5:
             self.aimed = True
         else:
             self.aimed = False
@@ -118,6 +125,6 @@ class Battery:
         return ship_image
 
     def fire(self):
-        if self.reload == 0:
+        if self.reload == 0 and self.aimed:
             BulletManager.add(self.global_pos, (self.ship.angle + self.gun_angle) % 360, 3)
             self.reload = self.reload_time
