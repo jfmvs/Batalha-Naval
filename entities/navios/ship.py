@@ -13,12 +13,17 @@ class Ship:
         }
     }
 
-    def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, sprite: pg.Surface, **kwargs):
+    SPRITES = {}
+
+    @staticmethod
+    def init(*args):
+        for level, sprite in args:
+            Ship.SPRITES[level] = sprite
+
+    def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, **kwargs):
 
         self._position         = pg.Vector2(*pos)
-        self._original_sprite  = sprite
         self._angle            = kwargs.get('angle', 0)
-        self._render_sprite    = pg.transform.rotate(self._original_sprite, self._angle)
 
 
         self.stage = stage
@@ -33,7 +38,12 @@ class Ship:
 
         self.guns = [Battery(self, i, gun_type) for i in range(guns)]
 
+        self._render_sprite    = pg.transform.rotate(self.original_sprite, self._angle)
         self.camera = kwargs.get('camera')
+
+    @property
+    def original_sprite(self):
+        return Ship.SPRITES[self.stage]
 
     @property
     def direction(self):
@@ -81,7 +91,7 @@ class Ship:
             gun.fire()
 
     def update_sprite(self, dt):
-        self._render_sprite = pg.transform.rotate(self._original_sprite, self._angle)
+        self._render_sprite = pg.transform.rotate(self.original_sprite, self._angle)
         target = (0, 0)
         for gun in self.guns:
             self._render_sprite = gun.ready_aim(self._render_sprite, target, dt)

@@ -3,12 +3,12 @@ from .ship import Ship
 import math
 
 class Npc(Ship):
-    def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, sprite: pg.Surface, player, **kwargs):
-        super().__init__(pos, stage, gun_type, guns, sprite, **kwargs)
+    def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, player, **kwargs):
+        super().__init__(pos, stage, gun_type, guns, **kwargs)
         self.player = player
 
     def update_sprite(self, dt):
-        self._render_sprite = pg.transform.rotate(self._original_sprite, self._angle)
+        self._render_sprite = pg.transform.rotate(self.original_sprite, self._angle)
         target = self.player.position - self.position
         for gun in self.guns:
             self._render_sprite = gun.ready_aim(self._render_sprite, target, dt)

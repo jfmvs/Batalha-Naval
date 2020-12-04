@@ -3,8 +3,8 @@ from .ship import Ship
 
 
 class Player(Ship):
-    def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, sprite: pg.Surface, **kwargs):
-        super().__init__(pos, stage, gun_type, guns, sprite, **kwargs)
+    def __init__(self, pos: (list, tuple, pg.Vector2), stage, gun_type, guns, **kwargs):
+        super().__init__(pos, stage, gun_type, guns, **kwargs)
 
         self.nivelTotal = 0
         self.xp = 0
@@ -18,7 +18,7 @@ class Player(Ship):
         self.vidaAtual = 100
 
     def update_sprite(self, dt):
-        self._render_sprite = pg.transform.rotate(self._original_sprite, self._angle)
+        self._render_sprite = pg.transform.rotate(self.original_sprite, self._angle)
         target = pg.mouse.get_pos()
         for gun in self.guns:
             self._render_sprite = gun.ready_aim(self._render_sprite, target, dt)
