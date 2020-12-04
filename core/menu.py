@@ -74,7 +74,6 @@ class Menu:
             self.player.gun_count = Menu.BASE_STATS[self.player.stage][3]
             self.player.guns = self.player.new_guns(self.player.gun_count)
 
-
     def update(self, event):
         if self.player.xp >= self.player.xpNecessaria:
             if event.type == pg.KEYDOWN:

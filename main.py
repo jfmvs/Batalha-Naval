@@ -46,11 +46,13 @@ class App:
         Ship.init((1, SpriteManager.get('ship1')), (2, SpriteManager.get('ship2')), (3, SpriteManager.get('ship3')))
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
-        self.player = Player((400, 300), stage=1,
-                             gun_type='1x2', guns=2, camera=self.camera)
-
-        self.npcs, self._enemy_index = self.new_enemies(self._enemy_index)
-
+        self.player = Player((400, 300), stage=2,
+                             gun_type='1x3', guns=1, camera=self.camera)
+        self.npcs   = [
+            Npc((randint(0, 800), randint(0, 600)), angle=randint(0, 360), stage=2,
+                   gun_type='1x3', guns=4, camera=self.camera, player=self.player)
+            for _ in range(3)
+        ]
         self.crates = self.get_crates()
         self.menu = Menu(self.player)
 
@@ -142,6 +144,7 @@ class App:
                         (self.camera.position[1] - (self._SCREEN_HEIGHT / 2))))
 
                 result = npc_mask.overlap(BulletManager.get_mask(), offset)
+                
                 if result and bullet.owner not in self.npcs:
                     npc.vidaAtual -= bullet.damage
                     bullet.lifetime = 0
