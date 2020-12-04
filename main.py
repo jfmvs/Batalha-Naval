@@ -59,10 +59,6 @@ class App:
             )
         for _ in range(randint(1, 5)):
             crates.append(
-                PowerContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('crate'))
-            )
-        for _ in range(randint(1, 5)):
-            crates.append(
                 XPContainer(self.player, (randint(0, 1600), randint(0, 1200)), SpriteManager.get('xp-crate'))
             )
         return crates
