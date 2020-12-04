@@ -18,7 +18,7 @@ class Player(Ship):
         self.health = int(2)
         self.maximo = False
         self.vidaTotal = (20 * self.health) + Player.STAGE_STATUS[self.stage - 1]
-        self.vidaAtual = 20
+        self.vidaAtual = 60
 
     def update_sprite(self, dt):
         self._render_sprite = pg.transform.rotate(self.original_sprite, self._angle)
