@@ -19,7 +19,11 @@ class BulletManager:
         BulletManager._bullets = alive
 
     @staticmethod
-    def render(surface, camera):
+    def render(surface):
         for bullet in BulletManager._bullets:
             pg.draw.circle(surface, (200,200,200), (bullet.x, bullet.y), 2)
 
+
+    @staticmethod
+    def active_bullets():
+        return BulletManager._bullets

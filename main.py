@@ -134,7 +134,7 @@ class App:
             if result:
                 print('Player-Ship collision detected')
 
-            for bullet in BulletManager._bullets:
+            for bullet in BulletManager.active_bullets():
                 sprite = SpriteManager.get('bullet')
                 bullet_mask = pg.mask.from_surface(sprite)
                 offset = (
@@ -167,7 +167,7 @@ class App:
 
         Renderer.render_ship(self._SCREEN, self.player, self.camera)
 
-        for bullet in BulletManager._bullets:
+        for bullet in BulletManager.active_bullets():
             sprite = SpriteManager.get('bullet').copy()
             sprite = pg.transform.rotate(sprite, bullet.angle)
             Renderer.render_sprite(self._SCREEN, sprite, (bullet.x, bullet.y), centered=True)
