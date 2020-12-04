@@ -19,6 +19,7 @@ class App:
         self._TARGET_FPS       = 60
         self._running          = False
         self._current_fps      = 60
+        pg.mouse.set_visible(False)
         pg.display.set_caption('Batalha Naval - Testes')
 
         # itens do jogo
@@ -30,6 +31,8 @@ class App:
         SpriteManager.load('health-box', 'assets/health-box-2.png')
         SpriteManager.load('ammo-crate', 'assets/ammo-crate.png')
         SpriteManager.load('bullet', 'assets/Bullet_3.png')
+        SpriteManager.load('crosshair', 'assets/crosshair.png')
+        SpriteManager.rescale('crosshair', 0.5)
 
         self.camera = Camera((400, 300), self._SCREEN.get_size())
         self.player = Player((400, 300), sprite=SpriteManager.get('ship'), stage=2,
@@ -169,6 +172,8 @@ class App:
             Renderer.render_sprite(self._SCREEN, sprite, (bullet.x, bullet.y), centered=True)
 
         self.menu.render(self._SCREEN)
+
+        Renderer.render_sprite(self._SCREEN, SpriteManager.get('crosshair'), pg.mouse.get_pos(), centered=True)
 
 
     def _render_debug_data(self):
